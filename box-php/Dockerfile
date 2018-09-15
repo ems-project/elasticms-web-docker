@@ -66,7 +66,7 @@ RUN echo "Install Alpine packages ..."                                          
     curl -sSfLk ${FRONTEND_DOWNLOAD_URL}/${FRONTEND_VERSION}.tar.gz                                                              | \
     tar -xzC /opt/src --strip-components=1                                                                                      && \
     composer -vvvv install --no-interaction --no-suggest --working-dir /opt/src -o                                              && \
-    rm -rf /opt/src/bootstrap/cache/*                                                                                           && \
+    rm -rf /opt/src/bootstrap/cache/* /opt/src/.env /opt/src/.env.dist                                                          && \
     echo "Setup permissions on filesystem for non-privileged user ..."                                                          && \
     mkdir -p /opt/bin /opt/src /opt/etc /var/log/php-fpm /var/run/php-fpm /var/php/session /var/php/wsdlcache                   && \
     chown -Rf 1001:0 /opt /etc/ssmtp /etc/php7 /var/log/php-fpm /var/run/php-fpm /var/php/session /var/php/wsdlcache            && \
