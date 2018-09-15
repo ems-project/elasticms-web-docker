@@ -1,0 +1,44 @@
+sudo: required
+
+language: minimal
+
+services:
+  - docker
+
+stages:
+  - build
+  - aws-deploy
+
+jobs:
+  include:
+  - stage: build
+    script:
+      - echo "Stage [build] - Step [script] ..."
+      - docker build --no-cache --pull --build-arg FRONTEND_VERSION_ARG=$FRONTEND_VERSION -t docker.io/$DOCKER_USERNAME/website-skeleton-web:RC -f box-web/Dockerfile .
+      - docker build --no-cache --pull --build-arg FRONTEND_VERSION_ARG=$FRONTEND_VERSION -t docker.io/$DOCKER_USERNAME/website-skeleton-php:RC -f box-php/Dockerfile .
+    after_script:
+      - echo "Stage [Build] - Step [after_script] ..."
+      - docker images
+    after_success:
+      - echo "Stage [Build] - Step [after_success] ..."
+      - docker login -u="$DOCKER_USERNAME" --password="$DOCKER_PASSWORD"
+      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-web:RC docker.io/$DOCKER_USERNAME/website-skeleton-web:$FRONTEND_VERSION
+      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-php:RC docker.io/$DOCKER_USERNAME/website-skeleton-php:$FRONTEND_VERSION
+      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-web:RC docker.io/$DOCKER_USERNAME/website-skeleton-web:latest
+      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-php:RC docker.io/$DOCKER_USERNAME/website-skeleton-php:latest
+      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-web:$FRONTEND_VERSION
+      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-php:$FRONTEND_VERSION
+      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-web:latest
+      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-php:latest
+  - stage: aws-deploy
+    script:
+    - echo "Stage [aws-deploy] - Step [script] ..."
+    deploy:
+      provider: script
+      script: bash .aws/deploy.sh
+      on:
+        branch: master
+
+env:
+  global:
+  - FRONTEND_VERSION=1.9.21
