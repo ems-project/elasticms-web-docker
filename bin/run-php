@@ -45,4 +45,7 @@ php /opt/src/bin/console asset:install /opt/src/public --symlink --no-interactio
 echo "cache warm up"
 php /opt/src/bin/console cache:warm --no-interaction
 
+# Quick&Dirty Fix 
+ln -s /opt/src/public/bundles/ehealth_preview /opt/src/public/bundles/emsch_assets
+
 /usr/sbin/php-fpm7 -F -R
