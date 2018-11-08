@@ -22,12 +22,12 @@ jobs:
     after_success:
       - echo "Stage [Build] - Step [after_success] ..."
       - docker login -u="$DOCKER_USERNAME" --password="$DOCKER_PASSWORD"
-      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-web:RC docker.io/$DOCKER_USERNAME/website-skeleton-web:$FRONTEND_VERSION
-      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-php:RC docker.io/$DOCKER_USERNAME/website-skeleton-php:$FRONTEND_VERSION
+      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-web:RC docker.io/$DOCKER_USERNAME/website-skeleton-web:$FRONTEND_DOCKER_TAG
+      - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-php:RC docker.io/$DOCKER_USERNAME/website-skeleton-php:$FRONTEND_DOCKER_TAG
       - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-web:RC docker.io/$DOCKER_USERNAME/website-skeleton-web:latest
       - docker tag docker.io/$DOCKER_USERNAME/website-skeleton-php:RC docker.io/$DOCKER_USERNAME/website-skeleton-php:latest
-      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-web:$FRONTEND_VERSION
-      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-php:$FRONTEND_VERSION
+      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-web:$FRONTEND_DOCKER_TAG
+      - docker push docker.io/$DOCKER_USERNAME/website-skeleton-php:$FRONTEND_DOCKER_TAG
       - docker push docker.io/$DOCKER_USERNAME/website-skeleton-web:latest
       - docker push docker.io/$DOCKER_USERNAME/website-skeleton-php:latest
   - stage: aws-deploy
@@ -41,4 +41,5 @@ jobs:
 
 env:
   global:
-  - FRONTEND_VERSION=3.0.7-2
+  - FRONTEND_VERSION=3.0.7
+  - FRONTEND_DOCKER_TAG=3.0.7-2
