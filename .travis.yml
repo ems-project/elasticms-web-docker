@@ -42,4 +42,4 @@ jobs:
 env:
   global:
   - FRONTEND_VERSION=3.0.7
-  - FRONTEND_DOCKER_TAG=3.0.7-2
+  - FRONTEND_DOCKER_TAG=3.0.7-3
