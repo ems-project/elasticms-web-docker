@@ -1,6 +1,8 @@
 FROM docker.io/alpine:3.8
 
 ARG FRONTEND_VERSION_ARG=""
+ARG BUILD_DATE_ARG=""
+ARG VCS_REF_ARG=""
 
 USER root
 
@@ -8,13 +10,15 @@ ENV FRONTEND_VERSION=${FRONTEND_VERSION_ARG}                                    
     FRONTEND_DOWNLOAD_URL="https://github.com/ems-project/elasticms/archive"                                                       \
     HOME=/opt
 
-LABEL MAINTAINER="sebastian.molle@gmail.com"                                                                                       \
-      application.name="elasticms"                                                                                                 \
-      application.component="apache"                                                                                               \
-      io.k8s.description="Platform for running Apache Webserver"                                                                   \
-      io.k8s.display-name="Apache"                                                                                                 \
-      io.openshift.tags="apache httpd"                                                                                             \
-      application.version=${FRONTEND_VERSION}
+LABEL org.label-schema.build-date=$BUILD_DATE_ARG \
+      org.label-schema.name="Website Skeleton - WebServer Docker Image." \
+      org.label-schema.description="A preconfigured ElasticMS website." \
+      org.label-schema.url="http://www.elasticms.eu" \
+      org.label-schema.vcs-ref=$VCS_REF_ARG \
+      org.label-schema.vcs-url="https://github.com/ems-project/website-skeleton" \
+      org.label-schema.vendor="sebastian.molle@gmail.com" \
+      org.label-schema.version=$FRONTEND_VERSION_ARG \
+      org.label-schema.schema-version="1.0"
 
 WORKDIR ${HOME}
 
