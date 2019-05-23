@@ -32,6 +32,6 @@ jobs:
 env:
   global:
   - FRONTEND_VERSION=3.0.7
-  - FRONTEND_DOCKER_TAG=3.0.7-3
+  - FRONTEND_DOCKER_TAG=3.0.7-4
   - VCS_REF=${TRAVIS_COMMIT}
   - BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
