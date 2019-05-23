@@ -12,8 +12,8 @@ jobs:
   - stage: build
     script:
       - echo "Stage [build] - Step [script] ..."
-      - docker build --no-cache --pull --build-arg FRONTEND_VERSION_ARG=$FRONTEND_VERSION -t docker.io/$DOCKER_USERNAME/website-skeleton-web:RC -f box-web/Dockerfile .
-      - docker build --no-cache --pull --build-arg FRONTEND_VERSION_ARG=$FRONTEND_VERSION -t docker.io/$DOCKER_USERNAME/website-skeleton-php:RC -f box-php/Dockerfile .
+      - docker build --no-cache --pull --build-arg FRONTEND_VERSION_ARG=$FRONTEND_VERSION --build-arg FRONTEND_DOCKER_RELEASE_ARG=$FRONTEND_DOCKER_RELEASE --build-arg BUILD_DATE_ARG=$BUILD_DATE --build-arg VCS_REF_ARG=$VCS_REF -t docker.io/$DOCKER_USERNAME/website-skeleton-web:RC -f box-web/Dockerfile .
+      - docker build --no-cache --pull --build-arg FRONTEND_VERSION_ARG=$FRONTEND_VERSION --build-arg FRONTEND_DOCKER_RELEASE_ARG=$FRONTEND_DOCKER_RELEASE --build-arg BUILD_DATE_ARG=$BUILD_DATE --build-arg VCS_REF_ARG=$VCS_REF -t docker.io/$DOCKER_USERNAME/website-skeleton-php:RC -f box-php/Dockerfile .
     after_script:
       - echo "Stage [Build] - Step [after_script] ..."
       - docker images
@@ -32,6 +32,7 @@ jobs:
 env:
   global:
   - FRONTEND_VERSION=3.0.7
-  - FRONTEND_DOCKER_TAG=3.0.7-4
+  - FRONTEND_DOCKER_RELEASE=4
+  - FRONTEND_DOCKER_TAG="$FRONTEND_VERSION-$FRONTEND_DOCKER_RELEASE"
   - VCS_REF=${TRAVIS_COMMIT}
   - BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
