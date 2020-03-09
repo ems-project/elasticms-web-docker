@@ -52,7 +52,7 @@ export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasti
 @test "[$TEST_FILE] Launch Clair Scan for [ $BATS_EMSCH_DOCKER_IMAGE_NAME ] Docker Image" {
   export BATS_CLAIR_LOCAL_ENDPOINT_URL="http://$(docker inspect --format '{{ .NetworkSettings.Networks.docker_default.IPAddress }}' clair_local_scan):6060"
   export BATS_CLAIR_LOCAL_SCANNER_IP="clair_local_scanner"
-  export BATS_CLAIR_SCAN_DOCKER_IMAGE_NAME="${BATS_EMS_DOCKER_IMAGE_NAME:-docker.io/elasticms/skeleton:rc}"
+  export BATS_CLAIR_SCAN_DOCKER_IMAGE_NAME="${BATS_EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasticms/skeleton:rc}"
 
   run docker-compose -f docker-compose-fs.yml up clair_local_scanner
   assert_success
