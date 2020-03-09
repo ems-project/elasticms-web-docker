@@ -189,7 +189,7 @@ export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasti
   for file in ${BATS_TEST_DIRNAME%/}/config/fs/skeleton/*.properties ; do
     _basename=$(basename $file)
     _name=${_basename%.*}
-    docker_wait_for_log emsch 15 "Install \[ ${_name} \] CMS Domain from FS Folder /opt/configs/ \[ ${_basename} \] file successfully ..."
+    docker_wait_for_log emsch 15 "Install \[ ${_name} \] Skeleton Domain from FS Folder /opt/configs/ \[ ${_basename} \] file successfully ..."
     docker_wait_for_log emsch 15 "Elasticms assets installation for \[ ${_name} \] Skeleton Domain run successfully ..."
     docker_wait_for_log emsch 15 "Elasticms warming up for \[ ${_name} \] Skeleton Domain run successfully ..."
   done
