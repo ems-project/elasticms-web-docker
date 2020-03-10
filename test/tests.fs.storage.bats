@@ -97,7 +97,12 @@ export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasti
 
   command docker-compose -f docker-compose-fs.yml up -d elasticms
 }
- 
+
+@test "[$TEST_FILE] Check for Elasticms Default Index page response code 200" {
+  retry 12 5 curl_container ems :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  assert_output -l 0 $'200'
+}
+
 @test "[$TEST_FILE] Check for Elasticms startup messages in containers logs (Volume)" {
   for file in ${BATS_TEST_DIRNAME%/}/config/fs/elasticms/*.properties ; do
     _basename=$(basename $file)
@@ -183,6 +188,11 @@ export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasti
   export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
 
   command docker-compose -f docker-compose-fs.yml up -d skeleton
+}
+
+@test "[$TEST_FILE] Check for Website Skeleton Default Index page response code 200" {
+  retry 12 5 curl_container emsch :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  assert_output -l 0 $'200'
 }
 
 @test "[$TEST_FILE] Check for Website Skeleton startup messages in containers logs (Volume)" {

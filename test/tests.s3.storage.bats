@@ -156,6 +156,11 @@ export AWS_DEFAULT_REGION="${BATS_S3_DEFAULT_REGION}"
   done
 }
 
+@test "[$TEST_FILE] Check for Elasticms Default Index page response code 200" {
+  retry 12 5 curl_container ems :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  assert_output -l 0 $'200'
+}
+
 @test "[$TEST_FILE] Check for Elasticms status page response code 200 for all configured domains (S3)" {
   for file in ${BATS_TEST_DIRNAME%/}/config/s3/elasticms/*.properties ; do
     _basename=$(basename $file)
@@ -200,6 +205,11 @@ export AWS_DEFAULT_REGION="${BATS_S3_DEFAULT_REGION}"
   export BATS_EMS_LOCAL_ENDPOINT_URL=http://$(docker_ip ems):9000
 
   command docker-compose -f docker-compose-s3.yml up -d skeleton
+}
+
+@test "[$TEST_FILE] Check for Website Skeleton Default Index page response code 200" {
+  retry 12 5 curl_container emsch :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  assert_output -l 0 $'200'
 }
 
 @test "[$TEST_FILE] Check for Website Skeleton startup messages in containers logs (S3)" {
