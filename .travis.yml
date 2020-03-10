@@ -62,4 +62,4 @@ env:
     - VCS_REF=${TRAVIS_COMMIT}
     - BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
     - DOCKER_TAG="${WEBSITE_SKELETON_VERSION}-${RELEASE_NUMBER}"
-    - EMSCH_DOCKER_IMAGE_NAME="docker.io/elasticms/admin"
+    - EMSCH_DOCKER_IMAGE_NAME="docker.io/elasticms/website-skeleton"
