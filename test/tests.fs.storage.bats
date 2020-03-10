@@ -142,7 +142,7 @@ export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasti
 
     for environment in ${environments[@]}; do
 
-      run docker exec ems sh -c "/opt/bin/$_name ems:environment:rebuild $environment"
+      run docker exec ems sh -c "/opt/bin/$_name ems:environment:rebuild $environment --yellow-ok"
       assert_output -l -r "The alias ${environment} is now pointing to"
 
     done

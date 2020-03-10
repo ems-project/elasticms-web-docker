@@ -148,7 +148,7 @@ export AWS_DEFAULT_REGION="${BATS_S3_DEFAULT_REGION}"
 
     for environment in ${environments[@]}; do
 
-      run docker exec ems sh -c "/opt/bin/$_name ems:environment:rebuild $environment"
+      run docker exec ems sh -c "/opt/bin/$_name ems:environment:rebuild $environment --yellow-ok"
       assert_output -l -r "The alias ${environment} is now pointing to"
 
     done
