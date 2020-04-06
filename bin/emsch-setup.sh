@@ -135,7 +135,22 @@ EOL
     </Location>
 
 EOL
-  fi;
+
+    if ! [ -w /opt/src/.htpasswd ]; then
+      HTPASSWD_USERNAME=${HTPASSWD_USERNAME:-default}
+      HTPASSWD_PASSWORD=${HTPASSWD_PASSWORD:-password}
+
+      htpasswd -bc /opt/src/.htpasswd ${HTPASSWD_USERNAME} ${HTPASSWD_PASSWORD}
+
+      if [ $? -ne 0 ]; then
+        echo "Something was wrong when we create .htpasswd file !"
+      fi 
+
+    else
+      echo "htpasswd file already exist.  We use it to protect '${PROTECTED_URL}'"
+    fi
+
+  fi
 
   echo "Configure Apache Environment Variables ..."
   cat /tmp/$_name | sed '/^\s*$/d' | grep  -v '^#' | sed "s/\([a-zA-Z0-9_]*\)\=\(.*\)/    SetEnv \1 \2/g" >> /etc/apache2/conf.d/$name.conf

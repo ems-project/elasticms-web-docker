@@ -34,6 +34,9 @@ export BATS_STORAGE_SERVICE_NAME="postgresql"
 
 export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasticms/skeleton}:rc"
 
+export BATS_HTPASSWD_USERNAME="bats"
+export BATS_HTPASSWD_PASSWORD="bats"
+
 @test "[$TEST_FILE] Create Docker external volumes (local)" {
   command docker volume create -d local ${BATS_PGSQL_VOLUME_NAME}
   command docker volume create -d local ${BATS_EMSCH_CONFIG_VOLUME_NAME}
@@ -216,7 +219,7 @@ export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasti
     envsubst < $file > /tmp/$_name
     source /tmp/$_name
 
-    retry 12 5 curl_container emsch :9000/ -H "Host: ${SERVER_NAME}" -L -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "Host: ${SERVER_NAME}" -L -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
     rm /tmp/$_name
