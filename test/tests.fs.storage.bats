@@ -189,6 +189,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
 
 @test "[$TEST_FILE] Starting Website Skeleton (webserver, php-fpm)" {
   export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
+  export BATS_APACHE_ACCESS_CONTROL_ALLOW_ORIGIN="*"
 
   command docker-compose -f docker-compose-fs.yml up -d skeleton
 }
@@ -203,6 +204,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
     _basename=$(basename $file)
     _name=${_basename%.*}
     docker_wait_for_log emsch 15 "Install \[ ${_name} \] Skeleton Domain from FS Folder /opt/configs/ \[ ${_basename} \] file successfully ..."
+    docker_wait_for_log emsch 15 "Configure Apache CORS Header Access-Control-Allow-Origin to ${BATS_APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
     docker_wait_for_log emsch 15 "Elasticms assets installation for \[ ${_name} \] Skeleton Domain run successfully ..."
     docker_wait_for_log emsch 15 "Elasticms warming up for \[ ${_name} \] Skeleton Domain run successfully ..."
   done
@@ -240,4 +242,3 @@ export BATS_HTPASSWD_PASSWORD="bats"
   command docker volume rm ${BATS_ES_2_VOLUME_NAME}
   command docker volume rm ${BATS_PGSQL_VOLUME_NAME}
 }
-

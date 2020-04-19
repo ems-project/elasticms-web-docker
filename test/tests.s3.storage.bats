@@ -206,6 +206,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
   export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
   export BATS_S3_ENDPOINT_URL=http://$(docker_ip s3):4572
   export BATS_EMS_LOCAL_ENDPOINT_URL=http://$(docker_ip ems):9000
+  export BATS_APACHE_ACCESS_CONTROL_ALLOW_ORIGIN="*"
 
   command docker-compose -f docker-compose-s3.yml up -d skeleton
 }
@@ -220,6 +221,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
     _basename=$(basename $file)
     _name=${_basename%.*}
     docker_wait_for_log emsch 15 "Install \[ ${_name} \] Skeleton Domain from S3 Bucket \[ ${_basename} \] file successfully ..."
+    docker_wait_for_log emsch 15 "Configure Apache CORS Header Access-Control-Allow-Origin to ${BATS_APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
     docker_wait_for_log emsch 15 "Elasticms assets installation for \[ ${_name} \] Skeleton Domain run successfully ..."
     docker_wait_for_log emsch 15 "Elasticms warming up for \[ ${_name} \] Skeleton Domain run successfully ..."
   done
@@ -255,4 +257,3 @@ export BATS_HTPASSWD_PASSWORD="bats"
   command docker volume rm ${BATS_PGSQL_VOLUME_NAME}
   command docker volume rm ${BATS_CLAIR_LOCAL_SCANNER_CONFIG_VOLUME_NAME}
 }
-

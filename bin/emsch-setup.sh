@@ -115,6 +115,15 @@ EOL
 
 EOL
 
+  # APACHE_ACCESS_CONTROL_ALLOW_ORIGIN is not unset AND APACHE_ACCESS_CONTROL_ALLOW_ORIGIN.length > 0 
+  if [ ! -z ${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN+x} ] && [ -n "${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}" ]; then
+    echo "Configure Apache CORS Header Access-Control-Allow-Origin to ${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
+    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    Header set Access-Control-Allow-Origin "${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
+
+EOL
+  fi
+
   if [ -z ${APACHE_ENVIRONMENTS+x} ]; then
     #APACHE_ENVIRONMENTS is not set, apply old code for backward compatibility
     setup-only-one-alias
