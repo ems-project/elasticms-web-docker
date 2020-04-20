@@ -221,7 +221,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
     _basename=$(basename $file)
     _name=${_basename%.*}
     docker_wait_for_log emsch 15 "Install \[ ${_name} \] Skeleton Domain from S3 Bucket \[ ${_basename} \] file successfully ..."
-    docker_wait_for_log emsch 15 "Configure Apache CORS Header Access-Control-Allow-Origin to ${BATS_APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
+    docker_wait_for_log emsch 15 "Access-Control-Allow-Origin ${BATS_APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
     docker_wait_for_log emsch 15 "Elasticms assets installation for \[ ${_name} \] Skeleton Domain run successfully ..."
     docker_wait_for_log emsch 15 "Elasticms warming up for \[ ${_name} \] Skeleton Domain run successfully ..."
   done
