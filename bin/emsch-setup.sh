@@ -117,9 +117,18 @@ EOL
 
   # APACHE_ACCESS_CONTROL_ALLOW_ORIGIN is not unset AND APACHE_ACCESS_CONTROL_ALLOW_ORIGIN.length > 0 
   if [ ! -z ${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN+x} ] && [ -n "${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}" ]; then
-    echo "Configure Apache CORS Header Access-Control-Allow-Origin to ${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
+    export APACHE_ACCESS_CONTROL_ALLOW_METHODS=${APACHE_ACCESS_CONTROL_ALLOW_METHODS:-"GET"}
+    export APACHE_ACCESS_CONTROL_ALLOW_HEADERS=${APACHE_ACCESS_CONTROL_ALLOW_HEADERS:-"application/json"}
+
+    echo "Configure Apache CORS Headers ..."
+    echo "  -> Access-Control-Allow-Origin ${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
+    echo "  -> Access-Control-Allow-Methods ${APACHE_ACCESS_CONTROL_ALLOW_METHODS}"
+    echo "  -> Access-Control-Allow-Headers ${APACHE_ACCESS_CONTROL_ALLOW_HEADERS}"
+
     cat >> /etc/apache2/conf.d/$_name.conf << EOL
     Header set Access-Control-Allow-Origin "${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
+    Header set Access-Control-Allow-Methods "${APACHE_ACCESS_CONTROL_ALLOW_METHODS}"
+    Header set Access-Control-Allow-Headers "${APACHE_ACCESS_CONTROL_ALLOW_HEADERS}"
 
 EOL
   fi
