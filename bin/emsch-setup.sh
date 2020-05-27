@@ -112,6 +112,7 @@ EOL
 
     ErrorLog /dev/stderr
     CustomLog /dev/stdout common
+    Header set Cache-Control "${APACHE_CACHE_CONTROL:-"max-age=86400, public"}"
 
 EOL
 
