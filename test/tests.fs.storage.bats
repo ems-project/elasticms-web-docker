@@ -62,7 +62,12 @@ export BATS_HTPASSWD_PASSWORD="bats"
   docker_wait_for_log elasticsearch_1 120 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
   docker_wait_for_log elasticsearch_2 120 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
 }
- 
+
+@test "[$TEST_FILE] Starting Tika Service" {
+  command docker-compose -f docker-compose-fs.yml up -d tika
+  docker_wait_for_log tika 120 ".*Started Apache Tika server.*"
+}
+
 @test "[$TEST_FILE] Loading Config files in Elasticms Configuration FS Docker Volume" {
 
   for file in ${BATS_TEST_DIRNAME%/}/config/fs/elasticms/*.properties ; do
@@ -97,12 +102,13 @@ export BATS_HTPASSWD_PASSWORD="bats"
  
 @test "[$TEST_FILE] Starting Elasticms service configured for Volume mount" {
   export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
+  export BATS_TIKA_LOCAL_ENDPOINT_URL=http://$(docker_ip tika):9998
 
   command docker-compose -f docker-compose-fs.yml up -d elasticms
 }
 
 @test "[$TEST_FILE] Check for Elasticms Default Index page response code 200" {
-  retry 12 5 curl_container ems :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  retry 12 5 curl_container ems :9000/index.php -H 'Host: default.localhost' -s -w %{http_code} -o /dev/null
   assert_output -l 0 $'200'
 }
 
@@ -161,13 +167,13 @@ export BATS_HTPASSWD_PASSWORD="bats"
     envsubst < $file > /tmp/$_name
     source /tmp/$_name
 
-    retry 12 5 curl_container ems :9000/status/ -H "Host: ${SERVER_NAME}" -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container ems :9000/status/ -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'401'
 
-    retry 12 5 curl_container ems :9000/cluster/ -H "Host: ${SERVER_NAME}" -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container ems :9000/cluster/ -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
-    retry 12 5 curl_container ems :9000/health_check.json -H "Host: ${SERVER_NAME}" -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container ems :9000/health_check.json -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
     rm /tmp/$_name
@@ -195,7 +201,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
 }
 
 @test "[$TEST_FILE] Check for Website Skeleton Default Index page response code 200" {
-  retry 12 5 curl_container emsch :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  retry 12 5 curl_container emsch :9000/index.php -H 'Host: default.localhost' -s -w %{http_code} -o /dev/null
   assert_output -l 0 $'200'
 }
 
@@ -221,7 +227,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
     envsubst < $file > /tmp/$_name
     source /tmp/$_name
 
-    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "Host: ${SERVER_NAME}" -L -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "'Host: ${SERVER_NAME}'" -L -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
     rm /tmp/$_name

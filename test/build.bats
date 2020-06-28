@@ -18,6 +18,9 @@ export BATS_STORAGE_SERVICE_NAME="postgresql"
 
 export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasticms/skeleton}:rc"
 
-@test "[$TEST_FILE] Starting Website Skeleton Docker images build" {
-  command docker-compose -f docker-compose-fs.yml build --no-cache --pull skeleton
+docker-compose -f docker-compose-fs.yml build --compress --pull skeleton >&2
+
+@test "[$TEST_FILE] Check Website Skeleton Docker images build" {
+  run docker inspect --type=image ${BATS_EMSCH_DOCKER_IMAGE_NAME}
+  [ "$status" -eq 0 ]
 }
