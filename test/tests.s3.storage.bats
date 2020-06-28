@@ -238,8 +238,8 @@ export BATS_HTPASSWD_PASSWORD="bats"
     envsubst < $file > /tmp/$_name
     source /tmp/$_name
 
-    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "Host: ${SERVER_NAME}" -L -s -w %{http_code} -o /dev/null
-    assert_output -l 0 '200'
+    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "'Host: ${SERVER_NAME}'" -L -s -w %{http_code} -o /dev/null
+    assert_output -l 0 $'200'
 
     rm /tmp/$_name
 
