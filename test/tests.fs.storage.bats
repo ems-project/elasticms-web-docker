@@ -108,7 +108,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
 }
 
 @test "[$TEST_FILE] Check for Elasticms Default Index page response code 200" {
-  retry 12 5 curl_container ems :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  retry 12 5 curl_container ems :9000/index.php -H 'Host: default.localhost' -s -w %{http_code} -o /dev/null
   assert_output -l 0 $'200'
 }
 
@@ -167,13 +167,13 @@ export BATS_HTPASSWD_PASSWORD="bats"
     envsubst < $file > /tmp/$_name
     source /tmp/$_name
 
-    retry 12 5 curl_container ems :9000/status/ -H "Host: ${SERVER_NAME}" -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container ems :9000/status/ -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'401'
 
-    retry 12 5 curl_container ems :9000/cluster/ -H "Host: ${SERVER_NAME}" -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container ems :9000/cluster/ -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
-    retry 12 5 curl_container ems :9000/health_check.json -H "Host: ${SERVER_NAME}" -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container ems :9000/health_check.json -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
     rm /tmp/$_name
@@ -201,7 +201,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
 }
 
 @test "[$TEST_FILE] Check for Website Skeleton Default Index page response code 200" {
-  retry 12 5 curl_container emsch :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
+  retry 12 5 curl_container emsch :9000/index.php -H 'Host: default.localhost' -s -w %{http_code} -o /dev/null
   assert_output -l 0 $'200'
 }
 
