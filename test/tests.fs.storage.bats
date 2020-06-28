@@ -62,7 +62,12 @@ export BATS_HTPASSWD_PASSWORD="bats"
   docker_wait_for_log elasticsearch_1 120 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
   docker_wait_for_log elasticsearch_2 120 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
 }
- 
+
+@test "[$TEST_FILE] Starting Tika Service" {
+  command docker-compose -f docker-compose-fs.yml up -d tika
+  docker_wait_for_log tika 120 ".*Started Apache Tika server.*"
+}
+
 @test "[$TEST_FILE] Loading Config files in Elasticms Configuration FS Docker Volume" {
 
   for file in ${BATS_TEST_DIRNAME%/}/config/fs/elasticms/*.properties ; do
@@ -97,6 +102,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
  
 @test "[$TEST_FILE] Starting Elasticms service configured for Volume mount" {
   export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
+  export BATS_TIKA_LOCAL_ENDPOINT_URL=http://$(docker_ip tika):9998
 
   command docker-compose -f docker-compose-fs.yml up -d elasticms
 }
