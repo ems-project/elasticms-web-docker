@@ -6,7 +6,7 @@ load "helpers/dataloaders"
 load "lib/batslib"
 load "lib/output"
 
-export WEBSITE_SKELETON_VERSION=${WEBSITE_SKELETON_VERSION:-3.2.6}
+export WEBSITE_SKELETON_VERSION=${WEBSITE_SKELETON_VERSION:-3.3.8}
 export RELEASE_NUMBER=${RELEASE_NUMBER:-snapshot}
 export BUILD_DATE=${BUILD_DATE:-snapshot}
 export VCS_REF=${VCS_REF:-snapshot}
