@@ -57,7 +57,7 @@ notifications:
 env:
   global:
     - DOCKER_COMPOSE_VERSION=1.25.4
-    - WEBSITE_SKELETON_VERSION=3.3.8
+    - WEBSITE_SKELETON_VERSION=3.4.0
     - RELEASE_NUMBER=$TRAVIS_BUILD_NUMBER
     - VCS_REF=${TRAVIS_COMMIT}
     - BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
