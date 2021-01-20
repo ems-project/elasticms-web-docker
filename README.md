@@ -1,4 +1,4 @@
-# website-skeleton-docker [![Build Status](https://travis-ci.com/ems-project/website-skeleton-docker.svg?branch=master)](https://travis-ci.com/ems-project/website-skeleton-docker)
+# website-skeleton-docker ![Continuous Docker Image Build](https://github.com/ems-project/website-skeleton-docker/workflows/Continuous%20Docker%20Image%20Build/badge.svg)
 
 ElasticMS Website Frontend in Docker containers
 
