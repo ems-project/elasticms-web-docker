@@ -17,11 +17,6 @@ export BATS_DB_USER="${BATS_DB_USER:-example_adm}"
 export BATS_DB_PASSWORD="${BATS_DB_PASSWORD:-example}"
 export BATS_DB_NAME="${BATS_DB_NAME:-example}"
 
-export BATS_PGSQL_VOLUME_NAME=${BATS_PGSQL_VOLUME_NAME:-postgresql_data}
-export BATS_ES_1_VOLUME_NAME=${BATS_ES_1_VOLUME_NAME:-elasticsearch_data_1}
-export BATS_ES_2_VOLUME_NAME=${BATS_ES_2_VOLUME_NAME:-elasticsearch_data_2}
-export BATS_CLAIR_LOCAL_SCANNER_CONFIG_VOLUME_NAME=${BATS_CLAIR_LOCAL_SCANNER_CONFIG_VOLUME_NAME:-clair_local_scanner}
-
 export BATS_S3_EMS_CONFIG_BUCKET_NAME="s3bucket-ems-config/example/config/elasticms"
 export BATS_S3_EMSCH_CONFIG_BUCKET_NAME="s3bucket-ems-config/example/config/skeleton"
 export BATS_S3_STORAGE_BUCKET_NAME="s3bucket-example-ems-storage"
@@ -36,7 +31,7 @@ export BATS_CONTAINER_HEAP_PERCENT="${BATS_CONTAINER_HEAP_PERCENT:-0.80}"
 
 export BATS_STORAGE_SERVICE_NAME="postgresql"
 
-export BATS_EMSCH_DOCKER_IMAGE_NAME="${EMSCH_DOCKER_IMAGE_NAME:-docker.io/elasticms/skeleton}:rc"
+export BATS_ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME="${ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME:-docker.io/elasticms/website-skeleton:rc}"
 
 export AWS_ACCESS_KEY_ID="${BATS_S3_ACCESS_KEY_ID}"
 export AWS_SECRET_ACCESS_KEY="${BATS_S3_SECRET_ACCESS_KEY}"
@@ -44,17 +39,6 @@ export AWS_DEFAULT_REGION="${BATS_S3_DEFAULT_REGION}"
 
 export BATS_HTPASSWD_USERNAME="bats"
 export BATS_HTPASSWD_PASSWORD="bats"
-
-@test "[$TEST_FILE] Create Docker external volumes (local)" {
-  command docker volume create -d local ${BATS_PGSQL_VOLUME_NAME}
-  command docker volume create -d local ${BATS_ES_1_VOLUME_NAME}
-  command docker volume create -d local ${BATS_ES_2_VOLUME_NAME}
-  command docker volume create -d local ${BATS_CLAIR_LOCAL_SCANNER_CONFIG_VOLUME_NAME}
-}
-
-#@test "[$TEST_FILE] Pull all Docker images" {
-#  command docker-compose -f docker-compose-s3.yml pull
-#}
 
 @test "[$TEST_FILE] Starting Elasticms Storage Services (S3, PostgreSQL, Elasticsearch)" {
   command docker-compose -f docker-compose-s3.yml up -d s3 postgresql elasticsearch_1 elasticsearch_2 
@@ -152,7 +136,10 @@ export BATS_HTPASSWD_PASSWORD="bats"
     for environment in ${environments[@]}; do
 
       run docker exec ems sh -c "/opt/bin/$_name ems:environment:rebuild $environment --yellow-ok"
-      assert_output -l -r "The alias ${environment} is now pointing to"
+      #
+      # Comment as long as we don't want to continue to made tests based on content loaded from a db dump.
+      #      
+      # assert_output -l -r "The alias ${environment} is now pointing to"
 
     done
 
@@ -238,8 +225,11 @@ export BATS_HTPASSWD_PASSWORD="bats"
     envsubst < $file > /tmp/$_name
     source /tmp/$_name
 
-    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "'Host: ${SERVER_NAME}'" -L -s -w %{http_code} -o /dev/null
-    assert_output -l 0 $'200'
+    #
+    # Comment as long as we don't want to continue to made tests based on content loaded from a db dump.
+    #
+    # retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "'Host: ${SERVER_NAME}'" -L -s -w %{http_code} -o /dev/null
+    # assert_output -l 0 $'200'
 
     rm /tmp/$_name
 
@@ -251,9 +241,3 @@ export BATS_HTPASSWD_PASSWORD="bats"
   command docker-compose -f docker-compose-s3.yml rm -v -f  
 }
 
-@test "[$TEST_FILE] Cleanup Docker external volumes (local)" {
-  command docker volume rm ${BATS_ES_1_VOLUME_NAME}
-  command docker volume rm ${BATS_ES_2_VOLUME_NAME}
-  command docker volume rm ${BATS_PGSQL_VOLUME_NAME}
-  command docker volume rm ${BATS_CLAIR_LOCAL_SCANNER_CONFIG_VOLUME_NAME}
-}
