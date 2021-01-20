@@ -35,7 +35,7 @@ jobs:
           docker network create docker_default
           docker pull appropriate/curl:latest
           DOCKERHUB_IMAGENAME=docker.io/elasticms/website-skeleton
-          GHCR_IMAGENAME=ghcr.io/elasticms/website-skeleton
+          GHCR_IMAGENAME=ghcr.io/${{ github.repository_owner }}/website-skeleton
           VERSION_MAJOR_MINOR_PATCH=${{ env.ELASTICMS_WEBSITE_SKELETON_VERSION }}
           VERSION_MAJOR_MINOR=${VERSION_MAJOR_MINOR_PATCH%.*}
           VERSION_MAJOR=${VERSION_MAJOR_MINOR%.*}
