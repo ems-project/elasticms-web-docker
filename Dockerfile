@@ -37,6 +37,7 @@ LABEL eu.elasticms.skeleton.build-date=$BUILD_DATE_ARG \
 USER root
 
 COPY bin/ /opt/bin/container-entrypoint.d/
+COPY etc/ /usr/local/etc/
 COPY --from=builder /opt/src /opt/src
 
 RUN echo "Setup permissions on filesystem for non-privileged user ..." \
