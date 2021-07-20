@@ -41,7 +41,7 @@ function setup-only-one-alias {
   if ! [ -z ${ENVIRONMENT_ALIAS+x} ]; then
     echo "Configure Apache Alias (/bundles/emsch_assets) [ ${ENVIRONMENT_ALIAS} ] ..."
     cat >> /etc/apache2/conf.d/$_name.conf << EOL
-    Alias ${ALIAS}/bundles/emsch_assets /opt/src/public/bundles/$ENVIRONMENT_ALIAS
+    Alias /bundles/emsch_assets /opt/src/public/bundles/$ENVIRONMENT_ALIAS
 EOL
   fi
 
@@ -50,6 +50,7 @@ EOL
     echo "Caution do not add an alias that exists somewhere in a ems route (i.e. admin)"
     cat >> /etc/apache2/conf.d/$_name.conf << EOL
     Alias $ALIAS /opt/src/public
+    Alias $ALIAS/bundles/emsch_assets /opt/src/public/bundles/${ENVIRONMENT_ALIAS:-emsch_assets}
 
     RewriteEngine  on
     RewriteCond %{REQUEST_URI} !^$ALIAS/index.php
