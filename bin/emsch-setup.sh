@@ -41,7 +41,7 @@ function setup-only-one-alias {
   if ! [ -z ${ENVIRONMENT_ALIAS+x} ]; then
     echo "Configure Apache Alias (/bundles/emsch_assets) [ ${ENVIRONMENT_ALIAS} ] ..."
     cat >> /etc/apache2/conf.d/$_name.conf << EOL
-    Alias /bundles/emsch_assets /opt/src/public/bundles/$ENVIRONMENT_ALIAS
+    Alias ${ALIAS}/bundles/emsch_assets /opt/src/public/bundles/$ENVIRONMENT_ALIAS
 EOL
   fi
 
