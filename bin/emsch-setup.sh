@@ -52,7 +52,6 @@ EOL
     Alias $ALIAS /opt/src/public
     Alias $ALIAS/bundles/emsch_assets /opt/src/public/bundles/${ENVIRONMENT_ALIAS:-emsch_assets}
 
-    RewriteEngine  on
     RewriteCond %{REQUEST_URI} !^$ALIAS/index.php
     RewriteCond %{REQUEST_URI} !^$ALIAS/bundles
     RewriteCond %{REQUEST_URI} !^$ALIAS/favicon.ico\$
@@ -114,6 +113,8 @@ EOL
     ErrorLog /dev/stderr
     CustomLog /dev/stdout common
     Header set Cache-Control "${APACHE_CACHE_CONTROL:-"max-age=86400, public"}"
+    RewriteEngine On
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 EOL
 
