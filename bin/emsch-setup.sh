@@ -29,7 +29,7 @@ function setup-multi-alias {
     cat >> /etc/apache2/conf.d/$_name.conf << EOL
       $(echo ${APACHE_ENVIRONMENTS} | jq -r 'map("Alias "+.alias+"/bundles/emsch_assets /opt/src/public/bundles/"+.env) | join("\n")')
       $(echo ${APACHE_ENVIRONMENTS} | jq -r 'map("Alias "+.alias+" /opt/src/public") | join("\n")')
-      $(echo ${APACHE_ENVIRONMENTS} | jq -r 'map(["RewriteEngine on", "RewriteCond %{REQUEST_URI} !^"+.alias+"/index.php", "RewriteCond %{REQUEST_URI} !^"+.alias+"/bundles", "RewriteCond %{REQUEST_URI} !^"+.alias+"/favicon.ico$", "RewriteCond %{REQUEST_URI} !^"+.alias+"/apple-touch-icon.png$", "RewriteCond %{REQUEST_URI} !^"+.alias+"/robots.txt$", "RewriteRule ^"+.alias+" "+.alias+"/index.php$1 [PT]"])' | jq -r '.[] | join("\n")')
+      $(echo ${APACHE_ENVIRONMENTS} | jq -r 'map(["RewriteEngine on", "RewriteCond %{REQUEST_URI} !^"+.alias+"/index.php", "RewriteCond %{REQUEST_URI} !'${APACHE_CUSTOM_ASSETS_RC:-^\"+.alias+\"/bundles}'", "RewriteCond %{REQUEST_URI} !^"+.alias+"/favicon.ico$", "RewriteCond %{REQUEST_URI} !^"+.alias+"/apple-touch-icon.png$", "RewriteCond %{REQUEST_URI} !^"+.alias+"/robots.txt$", "RewriteRule ^"+.alias+" "+.alias+"/index.php$1 [PT]"])' | jq -r '.[] | join("\n")')
 EOL
 
   fi
@@ -50,8 +50,8 @@ EOL
     echo "Caution do not add an alias that exists somewhere in a ems route (i.e. admin)"
     cat >> /etc/apache2/conf.d/$_name.conf << EOL
     Alias $ALIAS /opt/src/public
+    Alias $ALIAS/bundles/emsch_assets /opt/src/public/bundles/${ENVIRONMENT_ALIAS:-emsch_assets}
 
-    RewriteEngine  on
     RewriteCond %{REQUEST_URI} !^$ALIAS/index.php
     RewriteCond %{REQUEST_URI} !^$ALIAS/bundles
     RewriteCond %{REQUEST_URI} !^$ALIAS/favicon.ico\$
@@ -113,6 +113,8 @@ EOL
     ErrorLog /dev/stderr
     CustomLog /dev/stdout common
     Header set Cache-Control "${APACHE_CACHE_CONTROL:-"max-age=86400, public"}"
+    RewriteEngine On
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 EOL
 
