@@ -162,9 +162,6 @@ export BATS_HTPASSWD_PASSWORD="bats"
     retry 12 5 curl_container ems :9000/status/ -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'401'
 
-    retry 12 5 curl_container ems :9000/cluster/ -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
-    assert_output -l 0 $'200'
-
     retry 12 5 curl_container ems :9000/health_check.json -H "'Host: ${SERVER_NAME}'" -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
