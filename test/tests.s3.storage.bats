@@ -40,11 +40,14 @@ export AWS_DEFAULT_REGION="${BATS_S3_DEFAULT_REGION}"
 export BATS_HTPASSWD_USERNAME="bats"
 export BATS_HTPASSWD_PASSWORD="bats"
 
+export BATS_VARNISH_ENABLED=${BATS_VARNISH_ENABLED:-"true"}
+
 @test "[$TEST_FILE] Starting Elasticms Storage Services (S3, PostgreSQL, Elasticsearch)" {
-  command docker-compose -f docker-compose-s3.yml up -d s3 postgresql elasticsearch_1 elasticsearch_2 
-  docker_wait_for_log postgresql 240 "LOG:  autovacuum launcher started"
-  docker_wait_for_log elasticsearch_1 240 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
-  docker_wait_for_log elasticsearch_2 240 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
+  command docker-compose -f docker-compose-s3.yml up -d s3 postgresql es01 es02 es03 
+  docker_wait_for_log postgresql 240 ".*LOG:  database system is ready to accept connections"
+  docker_wait_for_log es01 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
+  docker_wait_for_log es02 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
+  docker_wait_for_log es03 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
   docker_wait_for_log s3 240 "Ready."
 }
 
@@ -88,8 +91,8 @@ export BATS_HTPASSWD_PASSWORD="bats"
   done
 }
 
-@test "[$TEST_FILE] Starting Elasticms services (webserver, php-fpm) configured for AWS S3" {
-  export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
+@test "[$TEST_FILE] Starting Elasticms services (webserver, php-fpm) configured for S3" {
+  export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip es01):9200
   export BATS_S3_ENDPOINT_URL=http://$(docker_ip s3):4572
   export BATS_TIKA_LOCAL_ENDPOINT_URL=http://$(docker_ip tika):9998
 
@@ -200,6 +203,11 @@ export BATS_HTPASSWD_PASSWORD="bats"
   assert_output -l 0 $'200'
 }
 
+@test "[$TEST_FILE] Check for Website Skeleton Default Index page via Varnish response code 200" {
+  retry 12 5 curl_container emsch :6081/index.php -H 'Host: default.localhost' -s -w %{http_code} -o /dev/null
+  assert_output -l 0 $'200'
+}
+
 @test "[$TEST_FILE] Check for Website Skeleton startup messages in containers logs (S3)" {
   for file in ${BATS_TEST_DIRNAME%/}/config/s3/skeleton/*.properties ; do
     _basename=$(basename $file)
@@ -237,4 +245,3 @@ export BATS_HTPASSWD_PASSWORD="bats"
   command docker-compose -f docker-compose-s3.yml stop
   command docker-compose -f docker-compose-s3.yml rm -v -f  
 }
-

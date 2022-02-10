@@ -31,6 +31,8 @@ export BATS_ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME="${ELASTICMS_WEBSITE_SK
 export BATS_HTPASSWD_USERNAME="bats"
 export BATS_HTPASSWD_PASSWORD="bats"
 
+export BATS_VARNISH_ENABLED=${BATS_VARNISH_ENABLED:-"true"}
+
 @test "[$TEST_FILE] Create Docker external volumes (local)" {
   command docker volume create -d local ${BATS_EMSCH_CONFIG_VOLUME_NAME}
   command docker volume create -d local ${BATS_EMS_STORAGE_VOLUME_NAME}
@@ -43,10 +45,11 @@ export BATS_HTPASSWD_PASSWORD="bats"
 }
  
 @test "[$TEST_FILE] Starting Elasticms Storage Services (PostgreSQL, Elasticsearch)" {
-  command docker-compose -f docker-compose-fs.yml up -d postgresql elasticsearch_1 elasticsearch_2
-  docker_wait_for_log postgresql 120 "LOG:  autovacuum launcher started"
-  docker_wait_for_log elasticsearch_1 120 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
-  docker_wait_for_log elasticsearch_2 120 "\[INFO \]\[o.e.n.Node.*\] \[.*\] started"
+  command docker-compose -f docker-compose-fs.yml up -d postgresql es01 es02 es03
+  docker_wait_for_log postgresql 240 ".*LOG:  database system is ready to accept connections"
+  docker_wait_for_log es01 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
+  docker_wait_for_log es02 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
+  docker_wait_for_log es03 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
 }
 
 @test "[$TEST_FILE] Starting Tika Service" {
@@ -87,7 +90,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
 }
  
 @test "[$TEST_FILE] Starting Elasticms service configured for Volume mount" {
-  export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
+  export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip es01):9200
   export BATS_TIKA_LOCAL_ENDPOINT_URL=http://$(docker_ip tika):9998
 
   command docker-compose -f docker-compose-fs.yml up -d elasticms
@@ -179,7 +182,7 @@ export BATS_HTPASSWD_PASSWORD="bats"
 }
 
 @test "[$TEST_FILE] Starting Website Skeleton (webserver, php-fpm)" {
-  export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip elasticsearch_1):9200
+  export BATS_ES_LOCAL_ENDPOINT_URL=http://$(docker_ip es01):9200
   export BATS_APACHE_ACCESS_CONTROL_ALLOW_ORIGIN="*"
 
   command docker-compose -f docker-compose-fs.yml up -d skeleton
@@ -187,6 +190,11 @@ export BATS_HTPASSWD_PASSWORD="bats"
 
 @test "[$TEST_FILE] Check for Website Skeleton Default Index page response code 200" {
   retry 12 5 curl_container emsch :9000/index.php -H 'Host: default.localhost' -s -w %{http_code} -o /dev/null
+  assert_output -l 0 $'200'
+}
+
+@test "[$TEST_FILE] Check for Website Skeleton Default Index page via Varnish response code 200" {
+  retry 12 5 curl_container emsch :6081/index.php -H 'Host: default.localhost' -s -w %{http_code} -o /dev/null
   assert_output -l 0 $'200'
 }
 
