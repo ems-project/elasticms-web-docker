@@ -212,8 +212,11 @@ EOL
 
 }
 
-function configure {
+# fork a subprocess
+function configure (
   local -r _name=$1
+
+  source /tmp/${_name}
 
   create-apache-vhost "${_name}"
   create-wrapper-script "${_name}"
@@ -240,7 +243,7 @@ function configure {
   #  ln -s /opt/src/public/bundles/${ENVIRONMENT_ALIAS} /opt/src/public/bundles/emsch_assets
   #fi
 
-}
+)
 
 function install {
 
@@ -259,7 +262,6 @@ function install {
       echo "Install [ $name ] Skeleton Domain from S3 Bucket [ $config ] file ..."
 
       aws s3 cp s3://${AWS_S3_CONFIG_BUCKET_NAME%/}/$config ${AWS_CLI_EXTRA_ARGS} - | envsubst > /tmp/$name
-      source /tmp/$name
 
       configure "${name}"
 
@@ -279,7 +281,6 @@ function install {
       echo "Install [ $name ] Skeleton Domain from FS Folder /opt/secrets/ [ $filename ] file ..."
 
       envsubst < $file > /tmp/$name
-      source /tmp/$name
 
       configure "${name}"
 
@@ -299,7 +300,6 @@ function install {
       echo "Install [ $name ] Skeleton Domain from FS Folder /opt/configs/ [ $filename ] file ..."
 
       envsubst < $file > /tmp/$name
-      source /tmp/$name
 
       configure "${name}"
 
@@ -312,7 +312,6 @@ function install {
     echo "Install [ default ] Skeleton Domain from Environment variables ..."
 
     env | envsubst > /tmp/default
-    source /tmp/default
 
     configure "default"
 
