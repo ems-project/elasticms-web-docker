@@ -133,11 +133,10 @@ jobs:
           severity-threshold: CRITICAL
 
       - name: Test Prod Docker Image
-        env: 
+        env:
           ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME: ${{ steps.prep.outputs.imagename_prd }}:${{ env.CI_SHA_SHORT }}
         run: |
-          bats -r test/tests.fs.storage.bats
-          bats -r test/tests.s3.storage.bats
+          bats -r test/tests.bats
 
       - name: Push Prod Docker Image
         id: push_prd
