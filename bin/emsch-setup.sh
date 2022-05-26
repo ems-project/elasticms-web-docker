@@ -26,7 +26,7 @@ function setup-multi-alias {
     echo "Multiple environment aliases are defined: ${APACHE_ENVIRONMENTS}" | jq -c '.[]'
     echo "caution do not add an alias that exists somewhere in a ems route (i.e. admin)"
 
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
       $(echo ${APACHE_ENVIRONMENTS} | jq -r 'map("Alias "+.alias+"/bundles/emsch_assets /opt/src/public/bundles/"+.env) | join("\n")')
       $(echo ${APACHE_ENVIRONMENTS} | jq -r 'map("Alias "+.alias+" /opt/src/public") | join("\n")')
       $(echo ${APACHE_ENVIRONMENTS} | jq -r 'map(["RewriteEngine on", "RewriteCond %{REQUEST_URI} !^"+.alias+"/index.php", "RewriteCond %{REQUEST_URI} !'${APACHE_CUSTOM_ASSETS_RC:-^\"+.alias+\"/bundles}'", "RewriteCond %{REQUEST_URI} !^"+.alias+"/favicon.ico$", "RewriteCond %{REQUEST_URI} !^"+.alias+"/apple-touch-icon.png$", "RewriteCond %{REQUEST_URI} !^"+.alias+"/robots.txt$", "RewriteRule ^"+.alias+" "+.alias+"/index.php$1 [PT]"])' | jq -r '.[] | join("\n")')
@@ -40,7 +40,7 @@ function setup-only-one-alias {
 
   if ! [ -z ${ENVIRONMENT_ALIAS+x} ]; then
     echo "Configure Apache Alias (/bundles/emsch_assets) [ ${ENVIRONMENT_ALIAS} ] ..."
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Alias /bundles/emsch_assets /opt/src/public/bundles/$ENVIRONMENT_ALIAS
 EOL
   fi
@@ -48,7 +48,7 @@ EOL
   if ! [ -z ${ALIAS+x} ]; then
     echo "Configure Apache Alias (/opt/src/public) [ ${ALIAS} ] ..."
     echo "Caution do not add an alias that exists somewhere in a ems route (i.e. admin)"
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Alias $ALIAS /opt/src/public
     Alias $ALIAS/bundles/emsch_assets /opt/src/public/bundles/${ENVIRONMENT_ALIAS:-emsch_assets}
 
@@ -66,25 +66,25 @@ EOL
 function create-apache-vhost {
   local -r _name=$1
 
-  echo "Configure Apache Virtual Host for [ $_name ] Skeleton Domain ..."
+  echo "Configure Apache Virtual Host for [ $_name ] Skeleton Domains [ ${SERVER_NAME} ] ..."
 
-  if [ -f /etc/apache2/conf.d/$_name.conf ] ; then
-    rm /etc/apache2/conf.d/$_name.conf
+  if [ -f /etc/apache2/conf.d/${_name}-app.conf ] ; then
+    rm /etc/apache2/conf.d/${_name}-app.conf
   fi
 
-  cat > /etc/apache2/conf.d/$_name.conf <<EOL
+  cat > /etc/apache2/conf.d/${_name}-app.conf <<EOL
 <VirtualHost *:9000>
     ServerName $SERVER_NAME
 EOL
 
   if ! [ -z ${SERVER_ALIASES+x} ]; then
     echo "Configure Apache ServerAlias [ ${SERVER_ALIASES} ] ..."
-    cat >> /etc/apache2/conf.d/$name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     ServerAlias $SERVER_ALIASES
 EOL
   fi
 
-  cat >> /etc/apache2/conf.d/$_name.conf << EOL
+  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     LimitRequestLine 16384
 
     # Uncomment the following line to force Apache to pass the Authorization
@@ -118,7 +118,7 @@ EOL
 
 EOL
 
-  # APACHE_ACCESS_CONTROL_ALLOW_ORIGIN is not unset AND APACHE_ACCESS_CONTROL_ALLOW_ORIGIN.length > 0 
+  # APACHE_ACCESS_CONTROL_ALLOW_ORIGIN is not unset AND APACHE_ACCESS_CONTROL_ALLOW_ORIGIN.length > 0
   if [ ! -z ${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN+x} ] && [ -n "${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}" ]; then
     export APACHE_ACCESS_CONTROL_ALLOW_METHODS=${APACHE_ACCESS_CONTROL_ALLOW_METHODS:-"GET"}
     export APACHE_ACCESS_CONTROL_ALLOW_HEADERS=${APACHE_ACCESS_CONTROL_ALLOW_HEADERS:-"application/json"}
@@ -128,7 +128,7 @@ EOL
     echo "  -> Access-Control-Allow-Methods ${APACHE_ACCESS_CONTROL_ALLOW_METHODS}"
     echo "  -> Access-Control-Allow-Headers ${APACHE_ACCESS_CONTROL_ALLOW_HEADERS}"
 
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header set Access-Control-Allow-Origin "${APACHE_ACCESS_CONTROL_ALLOW_ORIGIN}"
     Header set Access-Control-Allow-Methods "${APACHE_ACCESS_CONTROL_ALLOW_METHODS}"
     Header set Access-Control-Allow-Headers "${APACHE_ACCESS_CONTROL_ALLOW_HEADERS}"
@@ -145,7 +145,7 @@ EOL
 
   if ! [ -z ${PROTECTED_URL+x} ]; then
     echo "Configure Apache Location (PROTECTED_URL) [ ${PROTECTED_URL} ] ..."
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     <Location "$PROTECTED_URL">
         AuthType Basic
         AuthName "protected area"
@@ -160,41 +160,37 @@ EOL
     if ! [ -w /opt/src/.htpasswd ]; then
       HTPASSWD_USERNAME=${HTPASSWD_USERNAME:-default}
       HTPASSWD_PASSWORD=${HTPASSWD_PASSWORD:-password}
-
       htpasswd -bc /opt/src/.htpasswd ${HTPASSWD_USERNAME} ${HTPASSWD_PASSWORD}
-
       if [ $? -ne 0 ]; then
         echo "Something was wrong when we create .htpasswd file !"
-      fi 
-
+      fi
     else
       echo "htpasswd file already exist.  We use it to protect '${PROTECTED_URL}'"
     fi
-
   fi
 
   echo "Configure Apache Environment Variables ..."
-  cat /tmp/$_name | sed '/^\s*$/d' | grep  -v '^#' | sed "s/\([a-zA-Z0-9_]*\)\=\(.*\)/    SetEnv \1 \2/g" >> /etc/apache2/conf.d/$name.conf
+  cat /tmp/$_name | sed '/^\s*$/d' | grep  -v '^#' | sed "s/\([a-zA-Z0-9_]*\)\=\(.*\)/    SetEnv \1 \2/g" >> /etc/apache2/conf.d/${_name}-app.conf
 
   if ! [ -z ${BASE_URL+x} ]; then
     echo "Configure Apache Proxy Load Balancer for Elasticsearch Cluster [ ${EMSCH_ELASTICSEARCH_CLUSTER} ] ..."
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
 
     ProxyRequests On
 
     <Proxy balancer://myset>
 EOL
-    echo $EMSCH_ELASTICSEARCH_CLUSTER | sed "s/,/\n/g" | sed "s/[\s\[\"]*\([^\"]*\)\".*/      BalancerMember \1/"  >> /etc/apache2/conf.d/$_name.conf
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    echo $EMSCH_ELASTICSEARCH_CLUSTER | sed "s/,/\n/g" | sed "s/[\s\[\"]*\([^\"]*\)\".*/      BalancerMember \1/"  >> /etc/apache2/conf.d/${_name}-app.conf
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
       #ProxySet lbmethod=byrequests
     </Proxy>
 
 EOL
 
-    echo $ELASTICSEARCH_CLUSTER | sed "s/,/\n/g" | sed "s/[\s\[\"]*\([^\"]*\)\".*/\1/" | grep ".*https.*" && echo "        SSLProxyEngine On" >> /etc/apache2/conf.d/$_name.conf
+    echo $ELASTICSEARCH_CLUSTER | sed "s/,/\n/g" | sed "s/[\s\[\"]*\([^\"]*\)\".*/\1/" | grep ".*https.*" && echo "        SSLProxyEngine On" >> /etc/apache2/conf.d/${_name}-app.conf
 
     echo "Configure Apache Location for [ ${BASE_URL} ] ..."
-    cat >> /etc/apache2/conf.d/$_name.conf << EOL
+    cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     <Location $BASE_URL/>
         ProxyPass "balancer://myset/"
         ProxyPassReverse "balancer://myset/"
@@ -204,11 +200,11 @@ EOL
 EOL
   fi;
 
-  cat >> /etc/apache2/conf.d/$_name.conf << EOL
+  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
 </VirtualHost>
 EOL
 
-  echo "Apache Virtual Host for [ $_name ] Skeleton Domain configured successfully ..."
+  echo "Apache Virtual Host for [ $_name ] Skeleton Domains [ ${SERVER_NAME} ] configured successfully ..."
 
 }
 
