@@ -2,6 +2,34 @@
 
 ElasticMS Website Frontend in Docker containers
 
+## Prerequisite
+Before launching the bats commands you must defined the following environment variables:  
+
+```dotenv  
+ELASTICMS_WEBSITE_SKELETON_VERSION=3.9.2 # The Website Skeleton version you want to test  
+ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME=docker.io/elasticms/website-skeleton # The ElasticMS Docker image name  
+```
+
+You must also install `bats`.  
+
+# Build
+
+```sh
+docker build --build-arg VERSION_ARG=${ELASTICMS_WEBSITE_SKELETON_VERSION} \
+             --build-arg RELEASE_ARG=snapshot \
+             --build-arg BUILD_DATE_ARG=snapshot \
+             --build-arg VCS_REF_ARG=snapshot \
+             --build-arg GITHUB_TOKEN_ARG=${GITHUB_TOKEN} \
+             --target emsch-prod \
+             --tag ${ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME}:rc .
+```
+
+# Test
+
+```sh
+bats test/tests.bats
+```
+
 ## Environment Variables
 
 | Variable Name | Description | Default | Example |
@@ -34,3 +62,14 @@ VCL Specific env vars.
 | VARNISH_VCL_RECV_REQUEST_X_FORWARDED_PROTO_HEADER_NAME_CUSTOM | [doc](https://varnish-cache.org/docs/trunk/users-guide/vcl-built-in-subs.html?highlight=recv#vcl-recv) | `X-Forwarded-Proto` | 
 | VARNISH_VCL_BACKEND_RESPONSE_TTL_CUSTOM | [doc](https://varnish-cache.org/docs/trunk/users-guide/vcl-example-manipulating-responses.html?highlight=response#altering-the-backend-response) | `10s` | 
 | VARNISH_VCL_BACKEND_RESPONSE_GRACE_CUSTOM | [doc](https://varnish-cache.org/docs/trunk/users-guide/vcl-example-manipulating-responses.html?highlight=response#altering-the-backend-response) | `24h` | 
+
+## Prometheus Metrics
+
+Return WebSite Skeleton Prometheus metrics.  
+
+### Environment Variables
+
+| Variable Name | Description | Default |
+| - | - | - |
+| METRICS_ENABLED | Add metrics dedicated vhost running on a specific port (9090). | `empty` |
+| METRICS_VHOST_SERVER_NAME_CUSTOM | Apache ServerName directive used for dedicated vhost. | `$(hostname -i)` |
