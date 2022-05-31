@@ -16,6 +16,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.2
 
+      - uses: actions/checkout@v3.0.2
+        with:
+          repository: ems-project/elasticms-demo
+          path: test/demo
+
+      - name: Prepare Elasticms Demo Project
+        id: prep_demo
+        run: |
+          mkdir -p test/demo/dist
+          npm install --save-dev webpack --prefix test/demo test/demo
+          npm run --prefix test/demo prod
+          chmod 777 -Rf test/demo
+
       - name: Fill GitHub Environment Variables
         uses: FranzDiebold/github-env-vars-action@v2.3.1
 
