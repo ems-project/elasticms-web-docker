@@ -139,11 +139,11 @@ jobs:
           tags: ${{ steps.meta_dev.outputs.tags }}
           labels: ${{ steps.meta_dev.outputs.labels }}
 
-      - name: Scan Prod Docker Image
-        uses: azure/container-scan@v0
-        with:
-          image-name: ${{ steps.prep.outputs.imagename_prd }}:${{ env.CI_SHA_SHORT }}
-          severity-threshold: CRITICAL
+#      - name: Scan Prod Docker Image
+#        uses: azure/container-scan@v0
+#        with:
+#          image-name: ${{ steps.prep.outputs.imagename_prd }}:${{ env.CI_SHA_SHORT }}
+#          severity-threshold: CRITICAL
 
       - name: Test Prod Docker Image
         env:
