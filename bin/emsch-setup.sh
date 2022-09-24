@@ -122,18 +122,22 @@ EOL
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Strict-Transport-Security "${APACHE_STRICT_TRANSPORT_SECURITY}"
 EOL
+  fi;
   if [ -z ${APACHE_CONTENT_SECURITY_POLICY} ]; then
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Content-Security-Policy "${APACHE_CONTENT_SECURITY_POLICY}"
 EOL
+  fi;
   if [ -z ${APACHE_REFERRER_POLICY} ]; then
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Referrer-Policy "${APACHE_REFERRER_POLICY}"
 EOL
+  fi;
   if [ -z ${APACHE_PERMISSIONS_POLICY} ]; then
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Permissions-Policy "${APACHE_PERMISSIONS_POLICY}"
 EOL
+  fi;
 
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     RewriteEngine On
