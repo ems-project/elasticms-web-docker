@@ -112,32 +112,32 @@ EOL
 
     ErrorLog /dev/stderr
     CustomLog /dev/stdout common
-    Header setifempty Cache-Control "${APACHE_CACHE_CONTROL:-"max-age=86400, public"}"
-    Header setifempty X-Frame-Options "${APACHE_X_FRAME_OPTIONS:-"SAMEORIGIN"}"
-    Header setifempty X-XSS-Protection "${APACHE_X_XSS_PROTECTION:-"1"}"
-    Header setifempty X-Content-Type-Options "${APACHE_X_CONTENT_TYPE_OPTIONS:-"nosniff"}"
+    #Header setifempty Cache-Control "${APACHE_CACHE_CONTROL:-"max-age=86400, public"}"
+    #Header setifempty X-Frame-Options "${APACHE_X_FRAME_OPTIONS:-"SAMEORIGIN"}"
+    #Header setifempty X-XSS-Protection "${APACHE_X_XSS_PROTECTION:-"1"}"
+    #Header setifempty X-Content-Type-Options "${APACHE_X_CONTENT_TYPE_OPTIONS:-"nosniff"}"
 EOL
 
-  if [ -z ${APACHE_STRICT_TRANSPORT_SECURITY} ]; then
-  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
-    Header setifempty Strict-Transport-Security "${APACHE_STRICT_TRANSPORT_SECURITY}"
-EOL
-  fi;
-  if [ -z ${APACHE_CONTENT_SECURITY_POLICY} ]; then
-  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
-    Header setifempty Content-Security-Policy "${APACHE_CONTENT_SECURITY_POLICY}"
-EOL
-  fi;
-  if [ -z ${APACHE_REFERRER_POLICY} ]; then
-  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
-    Header setifempty Referrer-Policy "${APACHE_REFERRER_POLICY}"
-EOL
-  fi;
-  if [ -z ${APACHE_PERMISSIONS_POLICY} ]; then
-  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
-    Header setifempty Permissions-Policy "${APACHE_PERMISSIONS_POLICY}"
-EOL
-  fi;
+#  if [ -z ${APACHE_STRICT_TRANSPORT_SECURITY} ]; then
+#  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
+#    Header setifempty Strict-Transport-Security "${APACHE_STRICT_TRANSPORT_SECURITY}"
+#EOL
+#  fi;
+#  if [ -z ${APACHE_CONTENT_SECURITY_POLICY} ]; then
+#  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
+#    Header setifempty Content-Security-Policy "${APACHE_CONTENT_SECURITY_POLICY}"
+#EOL
+#  fi;
+#  if [ -z ${APACHE_REFERRER_POLICY} ]; then
+#  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
+#    Header setifempty Referrer-Policy "${APACHE_REFERRER_POLICY}"
+#EOL
+#  fi;
+#  if [ -z ${APACHE_PERMISSIONS_POLICY} ]; then
+#  cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
+#    Header setifempty Permissions-Policy "${APACHE_PERMISSIONS_POLICY}"
+#EOL
+#  fi;
 
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     RewriteEngine On
