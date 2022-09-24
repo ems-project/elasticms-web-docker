@@ -42,14 +42,18 @@ bats test/tests.bats
 | APACHE_CUSTOM_ASSETS_RC | Rewrite condition that prevent request to be treated by PHP, typically bundles or assets | `^\"+.alias+\"/bundles` | `/bundles/` |
 | APACHE_X_FRAME_OPTIONS | The X-Frame-Options HTTP response header can be used to indicate whether or not a browser should be allowed to render a page in a <frame>, <iframe>, <embed> or <object>. | `SAMEORIGIN` | `DENY` |
 | APACHE_X_XSS_PROTECTION | The HTTP X-XSS-Protection response header is a feature of Internet Explorer, Chrome and Safari that stops pages from loading when they detect reflected cross-site scripting (XSS) attacks. | `1` | `1; mode=block`, `0` |
-| APACHE_X_CONTENT_TYPE_OPTIONS | The X-Content-Type-Options response HTTP header is a marker used by the server to indicate that the MIME types advertised in the Content-Type headers should be followed and not be changed. | `nosniff` | `` |
+| APACHE_X_CONTENT_TYPE_OPTIONS | The X-Content-Type-Options response HTTP header is a marker used by the server to indicate that the MIME types advertised in the Content-Type headers should be followed and not be changed. | `nosniff` |  |
+| APACHE_STRICT_TRANSPORT_SECURITY | [HTTP Strict Transport Security](https://scotthelme.co.uk/hsts-the-missing-link-in-tls/) is an excellent feature to support on your site and strengthens your implementation of TLS by getting the User Agent to enforce the use of HTTPS. | `max-age=31536000; includeSubDomains` |  |
+| APACHE_CONTENT_SECURITY_POLICY | [Content Security Policy](https://scotthelme.co.uk/content-security-policy-an-introduction/) is an effective measure to protect your site from XSS attacks. By whitelisting sources of approved content, you can prevent the browser from loading malicious assets. | `default-src https:` | `default-src 'self'; script-src 'self' cdnjs.cloudflare.com static.cloudflareinsights.com; img-src 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com; font-src 'self' fonts.gstatic.com cdnjs.cloudflare.com; form-action 'self'; report-uri https://scotthelme.report-uri.com/r/d/csp/enforce; report-to default` |
+| APACHE_REFERRER_POLICY | [Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/) is a new header that allows a site to control how much information the browser includes with navigations away from a document and should be set by all sites. | `no-referrer-when-downgrade` | `Strict-origin-when-cross-origi` |
+| APACHE_PERMISSIONS_POLICY | [Permissions Policy](https://scotthelme.co.uk/goodbye-feature-policy-and-hello-permissions-policy/) is a new header that allows a site to control which features and APIs can be used in the browser. | `ccelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()` |  |
+
 
 ## Varnish
 
 TODO
 
 ### Environment Variables
-
 VCL Specific env vars.
 
 | Variable Name | Description | Default |
