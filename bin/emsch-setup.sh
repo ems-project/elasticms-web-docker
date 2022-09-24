@@ -116,8 +116,8 @@ EOL
     Header setifempty X-Frame-Options "${APACHE_X_FRAME_OPTIONS:-"SAMEORIGIN"}"
     Header setifempty X-XSS-Protection "${APACHE_X_XSS_PROTECTION:-"1"}"
     Header setifempty X-Content-Type-Options "${APACHE_X_CONTENT_TYPE_OPTIONS:-"nosniff"}"
-    Header setifempty Strict-Transport-Security "${APACHE_STRICT_TRANSPORT_SECURITY:-"max-age=31536000; includeSubDomains"}"
-    Header setifempty Content-Security-Policy "${APACHE_CONTENT_SECURITY_POLICY:-"default-src https:"}"
+    Header setifempty Strict-Transport-Security "${APACHE_STRICT_TRANSPORT_SECURITY:-""}"
+    Header setifempty Content-Security-Policy "${APACHE_CONTENT_SECURITY_POLICY:-""}"
     Header setifempty Referrer-Policy "${APACHE_REFERRER_POLICY:-"no-referrer-when-downgrade"}"
     Header setifempty Permissions-Policy "${APACHE_PERMISSIONS_POLICY:-"accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()"}"
     RewriteEngine On
