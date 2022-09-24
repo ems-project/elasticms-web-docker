@@ -48,6 +48,7 @@ bats test/tests.bats
 | APACHE_REFERRER_POLICY | [Referrer Policy](https://scotthelme.co.uk/a-new-security-header-referrer-policy/) is a new header that allows a site to control how much information the browser includes with navigations away from a document and should be set by all sites. | `no-referrer-when-downgrade` | `Strict-origin-when-cross-origi` |
 | APACHE_PERMISSIONS_POLICY | [Permissions Policy](https://scotthelme.co.uk/goodbye-feature-policy-and-hello-permissions-policy/) is a new header that allows a site to control which features and APIs can be used in the browser. | `ccelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()` |  |
 
+You can test your security headers at [Security Headers](https://securityheaders.com/).
 
 ## Varnish
 
