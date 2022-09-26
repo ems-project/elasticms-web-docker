@@ -105,7 +105,7 @@ services:
     mem_limit: 512m
 
   elasticms:
-    image: docker.io/elasticms/admin:latest
+    image: docker.io/elasticms/admin:1
     networks:
       default:
         aliases:
