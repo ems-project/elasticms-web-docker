@@ -181,23 +181,23 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
 @test "[$TEST_FILE] Create Elasticms Super Admin user." {
 
-  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} fos:user:create --super-admin ${BATS_ELASTICMS_ADMIN_USERNAME} ${BATS_ELASTICMS_ADMIN_EMAIL} ${BATS_ELASTICMS_ADMIN_PASSWORD}"
-  assert_output -l 0 "Created user ${BATS_ELASTICMS_ADMIN_USERNAME}"
+  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:create --super-admin ${BATS_ELASTICMS_ADMIN_USERNAME} ${BATS_ELASTICMS_ADMIN_EMAIL} ${BATS_ELASTICMS_ADMIN_PASSWORD}"
+  assert_output -r ".*\[OK\] Created user \"${BATS_ELASTICMS_ADMIN_USERNAME}\""
 
-  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} fos:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_API"
-  assert_output -l 0 "Role \"ROLE_API\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\". This change will not apply until the user logs out and back in again."
+  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_API"
+  assert_output -r ".*\[OK\] Role \"ROLE_API\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} fos:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_COPY_PASTE"
-  assert_output -l 0 "Role \"ROLE_COPY_PASTE\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\". This change will not apply until the user logs out and back in again."
+  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_COPY_PASTE"
+  assert_output -r ".*\[OK\] Role \"ROLE_COPY_PASTE\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} fos:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_ALLOW_ALIGN"
-  assert_output -l 0 "Role \"ROLE_ALLOW_ALIGN\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\". This change will not apply until the user logs out and back in again."
+  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_ALLOW_ALIGN"
+  assert_output -r ".*\[OK\] Role \"ROLE_ALLOW_ALIGN\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} fos:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_FORM_CRM"
-  assert_output -l 0 "Role \"ROLE_FORM_CRM\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\". This change will not apply until the user logs out and back in again."
+  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_FORM_CRM"
+  assert_output -r ".*\[OK\] Role \"ROLE_FORM_CRM\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} fos:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_TASK_MANAGER"
-  assert_output -l 0 "Role \"ROLE_TASK_MANAGER\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\". This change will not apply until the user logs out and back in again."
+  run docker exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_TASK_MANAGER"
+  assert_output -r ".*\[OK\] Role \"ROLE_TASK_MANAGER\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
 }
 
@@ -205,18 +205,18 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:login --username=${BATS_ELASTICMS_ADMIN_USERNAME} --password=${BATS_ELASTICMS_ADMIN_PASSWORD} ${BATS_ELASTICMS_SKELETON_BACKEND_URL}
   assert_output -r ".*\[OK\] Welcome ${BATS_ELASTICMS_ADMIN_USERNAME} on ${BATS_ELASTICMS_BACKEND_URL}"
-  
+
 }
 
 @test "[$TEST_FILE] Upload Elasticms assets." {
-  
+
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} emsch:local:folder-upload -- /opt/src/admin/assets
   assert_output -r ".*\[OK\] .* \(on .*\) assets have been uploaded"
 
 }
 
 @test "[$TEST_FILE] Configure Elasticms Filters." {
-  
+
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update filter dutch_stemmer
   assert_output -r "filter dutch_stemmer with id .* has been updated"
 
@@ -253,7 +253,7 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update analyzer alpha_order
   assert_output -r "analyzer alpha_order with id .* has been updated"
-  
+
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update analyzer dutch_for_highlighting
   assert_output -r "analyzer dutch_for_highlighting with id .* has been updated"
 
@@ -467,6 +467,7 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 @test "[$TEST_FILE] Check for Elasticms status page response code 200 for all configured domains" {
 
   for file in ${BATS_TEST_DIRNAME%/}/configs/elasticms/*.env ; do
+
     _basename=$(basename $file)
     _name=${_basename%.*}
 
