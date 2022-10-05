@@ -40,6 +40,7 @@ COPY bin/ /opt/bin/container-entrypoint.d/
 COPY etc/ /usr/local/etc/
 COPY --from=builder /opt/src /opt/src
 
+ENV APP_DISABLE_DOTENV=true
 ENV EMS_METRIC_PORT="9090"
 
 RUN echo -e "\nListen ${EMS_METRIC_PORT}\n" >> /etc/apache2/httpd.conf \
@@ -81,6 +82,7 @@ COPY bin/ /opt/bin/container-entrypoint.d/
 COPY etc/ /usr/local/etc/
 COPY --from=builder /opt/src /opt/src
 
+ENV APP_DISABLE_DOTENV=true
 ENV EMS_METRIC_PORT="9090"
 
 RUN echo -e "\nListen ${EMS_METRIC_PORT}\n" >> /etc/apache2/httpd.conf \
