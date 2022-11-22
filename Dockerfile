@@ -6,7 +6,7 @@ ARG BUILD_DATE_ARG=""
 ARG VCS_REF_ARG=""
 
 ENV ELASTICMS_VERSION=${VERSION_ARG:-3.2.3} \
-    ELASTICMS_DOWNLOAD_URL="https://github.com/ems-project/website-skeleton/archive" 
+    ELASTICMS_DOWNLOAD_URL="https://github.com/ems-project/elasticms-web/archive" 
 
 RUN echo "Download and install ElastiCMS ..." \
     && mkdir -p /opt/src \
@@ -27,7 +27,7 @@ LABEL eu.elasticms.skeleton.build-date=$BUILD_DATE_ARG \
       eu.elasticms.skeleton.description="A minimal CMS to manage generic content in order to publish it in several Elasticsearch index." \
       eu.elasticms.skeleton.url="https://www.elasticms.eu/" \
       eu.elasticms.skeleton.vcs-ref=$VCS_REF_ARG \
-      eu.elasticms.skeleton.vcs-url="https://github.com/ems-project/website-skeleton" \
+      eu.elasticms.skeleton.vcs-url="https://github.com/ems-project/elasticms-web" \
       eu.elasticms.skeleton.vendor="sebastian.molle@gmail.com" \
       eu.elasticms.skeleton.version="$VERSION_ARG" \
       eu.elasticms.skeleton.release="$RELEASE_ARG" \
@@ -68,7 +68,7 @@ LABEL eu.elasticms.skeleton.build-date=$BUILD_DATE_ARG \
       eu.elasticms.skeleton.description="A minimal CMS to manage generic content in order to publish it in several Elasticsearch index." \
       eu.elasticms.skeleton.url="https://www.elasticms.eu/" \
       eu.elasticms.skeleton.vcs-ref=$VCS_REF_ARG \
-      eu.elasticms.skeleton.vcs-url="https://github.com/ems-project/website-skeleton" \
+      eu.elasticms.skeleton.vcs-url="https://github.com/ems-project/elasticms-web" \
       eu.elasticms.skeleton.vendor="sebastian.molle@gmail.com" \
       eu.elasticms.skeleton.version="$VERSION_ARG" \
       eu.elasticms.skeleton.release="$RELEASE_ARG" \
