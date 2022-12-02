@@ -7,7 +7,7 @@ Before launching the bats commands you must defined the following environment va
 
 ```dotenv  
 ELASTICMS_WEBSITE_SKELETON_VERSION=3.9.2 # The Website Skeleton version you want to test  
-ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME=docker.io/elasticms/website-skeleton:rc # The ElasticMS Docker image name  
+DOCKER_IMAGE_NAME=docker.io/elasticms/website-skeleton:rc # The ElasticMS Docker image name  
 ```
 
 You must also install `bats`.  
@@ -21,7 +21,7 @@ docker build --build-arg VERSION_ARG=${ELASTICMS_WEBSITE_SKELETON_VERSION} \
              --build-arg VCS_REF_ARG=snapshot \
              --build-arg GITHUB_TOKEN_ARG=${GITHUB_TOKEN} \
              --target emsch-prod \
-             --tag ${ELASTICMS_WEBSITE_SKELETON_DOCKER_IMAGE_NAME} .
+             --tag ${DOCKER_IMAGE_NAME} .
 ```
 
 # Test
