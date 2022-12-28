@@ -1,4 +1,4 @@
-# elasticms-web-docker ![Continuous Docker Image Build](https://github.com/ems-project/elasticms-web-docker/workflows/Continuous%20Docker%20Image%20Build/badge.svg)
+# elasticms-web-docker [![Docker Build](https://github.com/ems-project/elasticms-web-docker/actions/workflows/docker-build.yml/badge.svg?branch=5.x)](https://github.com/ems-project/elasticms-web-docker/actions/workflows/docker-build.yml) 
 
 ElasticMS Website Frontend in Docker containers
 
