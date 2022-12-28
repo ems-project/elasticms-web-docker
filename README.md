@@ -3,31 +3,47 @@
 ElasticMS Website Frontend in Docker containers
 
 ## Prerequisite
-Before launching the bats commands you must defined the following environment variables:  
 
-```dotenv  
-ELASTICMS_WEBSITE_SKELETON_VERSION=3.9.2 # The Website Skeleton version you want to test  
-DOCKER_IMAGE_NAME=docker.io/elasticms/website-skeleton:rc # The ElasticMS Docker image name  
-```
-
-You must also install `bats`.  
+You must install `bats`, `make`.
 
 # Build
 
 ```sh
-docker build --build-arg VERSION_ARG=${ELASTICMS_WEBSITE_SKELETON_VERSION} \
-             --build-arg RELEASE_ARG=snapshot \
-             --build-arg BUILD_DATE_ARG=snapshot \
-             --build-arg VCS_REF_ARG=snapshot \
-             --build-arg GITHUB_TOKEN_ARG=${GITHUB_TOKEN} \
-             --target emsch-prod \
-             --tag ${DOCKER_IMAGE_NAME} .
+make build[-dev] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to build> [ DOCKER_IMAGE_NAME=<ElasticMS Web Docker Image Name you want to build> ]
 ```
+
+## Example building __prd__ Docker image
+
+```sh
+make build ELASTICMS_WEB_VERSION=5.0.1
+```
+
+__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.0.1-prd`
+
+## Example building __dev__ Docker image
+
+```sh
+make build-dev ELASTICMS_WEB_VERSION=5.0.1
+```
+
+__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.0.1-dev`
 
 # Test
 
 ```sh
-bats test/tests.bats
+make test[-dev] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to test>
+```
+
+## Example testing of __prd__ builded docker image
+
+```sh
+make test ELASTICMS_WEB_VERSION=5.0.1
+```
+
+## Example testing of __dev__ builded docker image
+
+```sh
+make test-dev ELASTICMS_WEB_VERSION=5.0.1
 ```
 
 ## Environment Variables

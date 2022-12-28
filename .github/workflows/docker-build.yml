@@ -67,7 +67,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: Dockerfile
-          target: emsch-prod
+          target: prd
           build-args: |
             VERSION_ARG=${{ env.ELASTICMS_WEBSITE_SKELETON_VERSION }}
             RELEASE_ARG=${{ env.CI_RUN_ID }}
@@ -86,7 +86,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: Dockerfile
-          target: emsch-dev
+          target: dev
           build-args: |
             VERSION_ARG=${{ env.ELASTICMS_WEBSITE_SKELETON_VERSION }}
             RELEASE_ARG=${{ env.CI_RUN_ID }}

@@ -5,7 +5,7 @@ ARG RELEASE_ARG=""
 ARG BUILD_DATE_ARG=""
 ARG VCS_REF_ARG=""
 
-ENV ELASTICMS_VERSION=${VERSION_ARG:-3.2.3} \
+ENV ELASTICMS_VERSION=${VERSION_ARG:-5.0.1} \
     ELASTICMS_DOWNLOAD_URL="https://github.com/ems-project/elasticms-web/archive" 
 
 RUN echo "Download and install ElastiCMS ..." \
@@ -15,7 +15,7 @@ RUN echo "Download and install ElastiCMS ..." \
     && COMPOSER_MEMORY_LIMIT=-1 composer -vvvv install --no-interaction --no-suggest --no-scripts --working-dir /opt/src -o  \
     && rm -rf /opt/src/bootstrap/cache/* /opt/src/.env /opt/src/.env.dist 
 
-FROM docker.io/elasticms/base-apache-fpm:8.1 AS emsch-prod
+FROM docker.io/elasticms/base-apache-fpm:8.1 AS prd
 
 ARG VERSION_ARG=""
 ARG RELEASE_ARG=""
@@ -57,7 +57,7 @@ EXPOSE ${EMS_METRIC_PORT}/tcp
 HEALTHCHECK --start-period=10s --interval=1m --timeout=5s --retries=5 \
         CMD curl --fail --header "Host: default.localhost" http://localhost:9000/index.php || exit 1
 
-FROM docker.io/elasticms/base-apache-dev:7.4 AS emsch-dev
+FROM docker.io/elasticms/base-apache-dev:7.4 AS dev
 
 ARG VERSION_ARG=""
 ARG RELEASE_ARG=""
