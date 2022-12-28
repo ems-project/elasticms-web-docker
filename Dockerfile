@@ -57,7 +57,7 @@ EXPOSE ${EMS_METRIC_PORT}/tcp
 HEALTHCHECK --start-period=10s --interval=1m --timeout=5s --retries=5 \
         CMD curl --fail --header "Host: default.localhost" http://localhost:9000/index.php || exit 1
 
-FROM docker.io/elasticms/base-apache-dev:7.4 AS dev
+FROM docker.io/elasticms/base-apache-dev:8.1 AS dev
 
 ARG VERSION_ARG=""
 ARG RELEASE_ARG=""
