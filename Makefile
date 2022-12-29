@@ -1,5 +1,5 @@
 #!make
-DOCKER_IMAGE_NAME ?= docker.io/elasticms/website-skeleton
+include .build.env
 
 BUILD_DATE ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
