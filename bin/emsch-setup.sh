@@ -119,25 +119,25 @@ EOL
     Header setifempty X-Content-Type-Options "${APACHE_X_CONTENT_TYPE_OPTIONS:-"nosniff"}"
 EOL
 
-  if [ -z ${APACHE_STRICT_TRANSPORT_SECURITY} ]; then
+  if ! [ -z ${APACHE_STRICT_TRANSPORT_SECURITY+x} ]; then
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Strict-Transport-Security "${APACHE_STRICT_TRANSPORT_SECURITY}"
 EOL
   fi;
 
-  if [ -z ${APACHE_CONTENT_SECURITY_POLICY} ]; then
+  if ! [ -z ${APACHE_CONTENT_SECURITY_POLICY+x} ]; then
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Content-Security-Policy "${APACHE_CONTENT_SECURITY_POLICY}"
 EOL
   fi;
 
-  if [ -z ${APACHE_REFERRER_POLICY} ]; then
+  if ! [ -z ${APACHE_REFERRER_POLICY+x} ]; then
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Referrer-Policy "${APACHE_REFERRER_POLICY}"
 EOL
   fi;
 
-  if [ -z ${APACHE_PERMISSIONS_POLICY} ]; then
+  if ! [ -z ${APACHE_PERMISSIONS_POLICY+x} ]; then
   cat >> /etc/apache2/conf.d/${_name}-app.conf << EOL
     Header setifempty Permissions-Policy "${APACHE_PERMISSIONS_POLICY}"
 EOL
