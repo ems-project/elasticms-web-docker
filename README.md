@@ -9,44 +9,66 @@ You must install `bats`, `make`.
 # Build
 
 ```sh
-make build[-dev] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to build> [ DOCKER_IMAGE_NAME=<ElasticMS Web Docker Image Name you want to build> ]
+make build[-dev|-all] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to build> [ DOCKER_IMAGE_NAME=<ElasticMS Web Docker Image Name you want to build> ]
 ```
 
 ## Example building __prd__ Docker image
 
 ```sh
-make build ELASTICMS_WEB_VERSION=5.0.1
+make build ELASTICMS_WEB_VERSION=5.1.2
 ```
 
-__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.0.1-prd`
+__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.1.2-prd`
 
 ## Example building __dev__ Docker image
 
 ```sh
-make build-dev ELASTICMS_WEB_VERSION=5.0.1
+make build-dev ELASTICMS_WEB_VERSION=5.1.2
 ```
 
-__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.0.1-dev`
+__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.1.2-dev`
 
 # Test
 
 ```sh
-make test[-dev] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to test>
+make test[-dev|all] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to test>
 ```
 
 ## Example testing of __prd__ builded docker image
 
 ```sh
-make test ELASTICMS_WEB_VERSION=5.0.1
+make test ELASTICMS_WEB_VERSION=5.1.2
 ```
 
 ## Example testing of __dev__ builded docker image
 
 ```sh
-make test-dev ELASTICMS_WEB_VERSION=5.0.1
+make test-dev ELASTICMS_WEB_VERSION=5.1.2
 ```
 
-## Environment Variables
+# Releases
+
+Releases are done via GitHub actions and uploaded on Docker Hub.
+
+# Supported tags and respective Dockerfile links
+
+- [`5.x.y`, `5.x`, `5`, `5.x.y-prd`, `5.x-prd`, `5-prd`, `5.x.y-dev`, `5.x-dev`, `5-dev`](Dockerfile)
+
+# Image Variants
+
+The elasticms/admin images come in many flavors, each designed for a specific use case.
+
+## `docker.io/elasticms/website-skeleton:<version>[-prd]`  
+
+This variant contains the [ElasticMS Web](https://github.com/ems-project/elasticms-web) installed in a Production PHP environment.  
+
+## `docker.io/elasticms/website-skeleton:<version>-dev`
+
+This variant contains the [ElasticMS Web](https://github.com/ems-project/elasticms-web) installed in a Development PHP environment.  
+
+# Configuration
+
+## Environment variables
 
 | Variable Name | Description | Default | Example |
 | - | - | - | - |
