@@ -22,17 +22,17 @@ ARG RELEASE_ARG=""
 ARG BUILD_DATE_ARG=""
 ARG VCS_REF_ARG=""
 
-LABEL eu.elasticms.skeleton.build-date=$BUILD_DATE_ARG \
-      eu.elasticms.skeleton.name="ElasticMS - Website Skeleton." \
-      eu.elasticms.skeleton.description="A minimal CMS to manage generic content in order to publish it in several Elasticsearch index." \
-      eu.elasticms.skeleton.url="https://www.elasticms.eu/" \
-      eu.elasticms.skeleton.vcs-ref=$VCS_REF_ARG \
-      eu.elasticms.skeleton.vcs-url="https://github.com/ems-project/elasticms-web" \
-      eu.elasticms.skeleton.vendor="sebastian.molle@gmail.com" \
-      eu.elasticms.skeleton.version="$VERSION_ARG" \
-      eu.elasticms.skeleton.release="$RELEASE_ARG" \
-      eu.elasticms.skeleton.schema-version="1.0" \
-      eu.elasticms.skeleton.docker-image="all-in-one"
+LABEL be.fgov.elasticms.web.build-date=$BUILD_DATE_ARG \
+      be.fgov.elasticms.web.name="elasticms-web" \
+      be.fgov.elasticms.web.description="Website Skeleton of the ElasticMS suite." \
+      be.fgov.elasticms.web.url="https://hub.docker.com/repository/docker/elasticms/website-skeleton" \
+      be.fgov.elasticms.web.vcs-ref=$VCS_REF_ARG \
+      be.fgov.elasticms.web.vcs-url="https://github.com/ems-project/elasticms-web-docker" \
+      be.fgov.elasticms.web.vendor="sebastian.molle@gmail.com" \
+      be.fgov.elasticms.web.version="$VERSION_ARG" \
+      be.fgov.elasticms.web.release="$RELEASE_ARG" \
+      be.fgov.elasticms.web.environment="prd" \
+      be.fgov.elasticms.web.schema-version="1.0"
 
 USER root
 
@@ -64,17 +64,17 @@ ARG RELEASE_ARG=""
 ARG BUILD_DATE_ARG=""
 ARG VCS_REF_ARG=""
 
-LABEL eu.elasticms.skeleton.build-date=$BUILD_DATE_ARG \
-      eu.elasticms.skeleton.name="ElasticMS - Website Skeleton. (DEV)" \
-      eu.elasticms.skeleton.description="A minimal CMS to manage generic content in order to publish it in several Elasticsearch index." \
-      eu.elasticms.skeleton.url="https://www.elasticms.eu/" \
-      eu.elasticms.skeleton.vcs-ref=$VCS_REF_ARG \
-      eu.elasticms.skeleton.vcs-url="https://github.com/ems-project/elasticms-web" \
-      eu.elasticms.skeleton.vendor="sebastian.molle@gmail.com" \
-      eu.elasticms.skeleton.version="$VERSION_ARG" \
-      eu.elasticms.skeleton.release="$RELEASE_ARG" \
-      eu.elasticms.skeleton.schema-version="1.0" \
-      eu.elasticms.skeleton.docker-image="all-in-one-dev"
+LABEL be.fgov.elasticms.web.build-date=$BUILD_DATE_ARG \
+      be.fgov.elasticms.web.name="elasticms-web" \
+      be.fgov.elasticms.web.description="Website Skeleton of the ElasticMS suite." \
+      be.fgov.elasticms.web.url="https://hub.docker.com/repository/docker/elasticms/website-skeleton" \
+      be.fgov.elasticms.web.vcs-ref=$VCS_REF_ARG \
+      be.fgov.elasticms.web.vcs-url="https://github.com/ems-project/elasticms-web-docker" \
+      be.fgov.elasticms.web.vendor="sebastian.molle@gmail.com" \
+      be.fgov.elasticms.web.version="$VERSION_ARG" \
+      be.fgov.elasticms.web.release="$RELEASE_ARG" \
+      be.fgov.elasticms.web.environment="dev" \
+      be.fgov.elasticms.web.schema-version="1.0"
 
 USER root
 
