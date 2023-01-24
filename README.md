@@ -1,36 +1,74 @@
-# elasticms-web-docker ![Continuous Docker Image Build](https://github.com/ems-project/elasticms-web-docker/workflows/Continuous%20Docker%20Image%20Build/badge.svg)
+# elasticms-web-docker [![Docker Build](https://github.com/ems-project/elasticms-web-docker/actions/workflows/docker-build.yml/badge.svg?branch=5.x)](https://github.com/ems-project/elasticms-web-docker/actions/workflows/docker-build.yml) 
 
 ElasticMS Website Frontend in Docker containers
 
 ## Prerequisite
-Before launching the bats commands you must defined the following environment variables:  
 
-```dotenv  
-ELASTICMS_WEBSITE_SKELETON_VERSION=3.9.2 # The Website Skeleton version you want to test  
-DOCKER_IMAGE_NAME=docker.io/elasticms/website-skeleton:rc # The ElasticMS Docker image name  
-```
-
-You must also install `bats`.  
+You must install `bats`, `make`.
 
 # Build
 
 ```sh
-docker build --build-arg VERSION_ARG=${ELASTICMS_WEBSITE_SKELETON_VERSION} \
-             --build-arg RELEASE_ARG=snapshot \
-             --build-arg BUILD_DATE_ARG=snapshot \
-             --build-arg VCS_REF_ARG=snapshot \
-             --build-arg GITHUB_TOKEN_ARG=${GITHUB_TOKEN} \
-             --target emsch-prod \
-             --tag ${DOCKER_IMAGE_NAME} .
+make build[-dev|-all] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to build> [ DOCKER_IMAGE_NAME=<ElasticMS Web Docker Image Name you want to build> ]
 ```
+
+## Example building __prd__ Docker image
+
+```sh
+make build ELASTICMS_WEB_VERSION=5.1.2
+```
+
+__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.1.2-prd`
+
+## Example building __dev__ Docker image
+
+```sh
+make build-dev ELASTICMS_WEB_VERSION=5.1.2
+```
+
+__Provide docker image__ : `docker.io/elasticms/website-skeleton:5.1.2-dev`
 
 # Test
 
 ```sh
-bats test/tests.bats
+make test[-dev|all] ELASTICMS_WEB_VERSION=<ElasticMS Web Version you want to test>
 ```
 
-## Environment Variables
+## Example testing of __prd__ builded docker image
+
+```sh
+make test ELASTICMS_WEB_VERSION=5.1.2
+```
+
+## Example testing of __dev__ builded docker image
+
+```sh
+make test-dev ELASTICMS_WEB_VERSION=5.1.2
+```
+
+# Releases
+
+Releases are done via GitHub actions and uploaded on Docker Hub.
+
+# Supported tags and respective Dockerfile links
+
+- [`5.x.y`, `5.x`, `5`, `5.x.y-prd`, `5.x-prd`, `5-prd`, `5.x.y-dev`, `5.x-dev`, `5-dev`](Dockerfile)
+
+# Image Variants
+
+The elasticms/admin images come in many flavors, each designed for a specific use case.
+
+## `docker.io/elasticms/website-skeleton:<version>[-prd]`  
+
+This variant contains the [ElasticMS Web](https://github.com/ems-project/elasticms-web) installed in a Production PHP environment.  
+
+## `docker.io/elasticms/website-skeleton:<version>-dev`
+
+This variant contains the [ElasticMS Web](https://github.com/ems-project/elasticms-web) installed in a Development PHP environment.  
+
+# Configuration
+
+## Environment variables
 
 | Variable Name | Description | Default | Example |
 | - | - | - | - |
@@ -40,7 +78,7 @@ bats test/tests.bats
 | APACHE_CACHE_CONTROL | Define Cache-Control header for static files directly served by Apache (i.e. from bundles and asset archives) [Apache](https://httpd.apache.org/docs/2.4/en/mod/mod_headers.html) [Header](https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Cache-Control).  | `max-age=86400, public` | `immutable, max-age=31536000, public` |
 | PUID | Define the user identifier  | `1001` | `1000` |
 | APACHE_CUSTOM_ASSETS_RC | Rewrite condition that prevent request to be treated by PHP, typically bundles or assets | `^\"+.alias+\"/bundles` | `/bundles/` |
-| APACHE_X_FRAME_OPTIONS | The X-Frame-Options HTTP response header can be used to indicate whether or not a browser should be allowed to render a page in a <frame>, <iframe>, <embed> or <object>. | `SAMEORIGIN` | `DENY` |
+| APACHE_X_FRAME_OPTIONS | The X-Frame-Options HTTP response header can be used to indicate whether or not a browser should be allowed to render a page in a `<frame>`, `<iframe>`, `<embed>` or `<object>`. | `SAMEORIGIN` | `DENY` |
 | APACHE_X_XSS_PROTECTION | The HTTP X-XSS-Protection response header is a feature of Internet Explorer, Chrome and Safari that stops pages from loading when they detect reflected cross-site scripting (XSS) attacks. | `1` | `1; mode=block`, `0` |
 | APACHE_X_CONTENT_TYPE_OPTIONS | The X-Content-Type-Options response HTTP header is a marker used by the server to indicate that the MIME types advertised in the Content-Type headers should be followed and not be changed. | `nosniff` |  |
 | APACHE_STRICT_TRANSPORT_SECURITY | [HTTP Strict Transport Security](https://scotthelme.co.uk/hsts-the-missing-link-in-tls/) is an excellent feature to support on your site and strengthens your implementation of TLS by getting the User Agent to enforce the use of HTTPS. | N/A | `max-age=31536000; includeSubDomains` |
