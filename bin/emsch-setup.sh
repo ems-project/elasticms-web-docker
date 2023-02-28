@@ -12,7 +12,7 @@ set -o allexport
 source /tmp/$_instance_name
 set +o allexport
 
-php /opt/src/bin/console \$@
+php /opt/src/bin/console "\$@"
 
 EOL
 
