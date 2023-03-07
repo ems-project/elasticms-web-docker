@@ -40,6 +40,7 @@ export BATS_ELASTICMS_SKELETON_ENVIRONMENT="demo-preview-dev"
 
 export BATS_STORAGE_SERVICE_NAME="postgresql"
 
+export BATS_EMS_VERSION="${EMS_VERSION:-5.x}"
 export BATS_DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME:-docker.io/elasticms/website-skeleton:rc}"
 
 export AWS_ACCESS_KEY_ID="${BATS_S3_ACCESS_KEY_ID}"
@@ -55,10 +56,9 @@ export BATS_REDIS_PORT="${BATS_REDIS_PORT:-6379}"
 export BATS_VARNISH_ENABLED=${BATS_VARNISH_ENABLED:-"true"}
 export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
-@test "[$TEST_FILE] Prepare Skeleton." {
+@test "[$TEST_FILE] Prepare Skeleton [$BATS_EMS_VERSION]." {
 
-  # TODO : tag demo git repo to retrieve always the same code
-  run git clone --branch 5.x git@github.com:ems-project/elasticms-demo.git ${BATS_TEST_DIRNAME%/}/demo
+  run git clone -b ${BATS_EMS_VERSION} git@github.com:ems-project/elasticms-demo.git ${BATS_TEST_DIRNAME%/}/demo
   run mkdir -p ${BATS_TEST_DIRNAME%/}/demo/dist
   run npm install --save-dev webpack --prefix ${BATS_TEST_DIRNAME%/}/demo ${BATS_TEST_DIRNAME%/}/demo
   run npm run --prefix ${BATS_TEST_DIRNAME%/}/demo prod
