@@ -339,6 +339,9 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
 @test "[$TEST_FILE] Configure Elasticms Environments." {
 
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update environment default
+  assert_output -r "environment default with id .* has been updated"
+
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update environment preview
   assert_output -r "environment preview with id .* has been updated"
 
@@ -436,6 +439,15 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
 }
 
+@test "[$TEST_FILE] Activate Elasticms content types." {
+
+  run docker exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:contenttype:activate --all --force
+
+  # Missing message when action is done (with success or not)
+  # assert_output -r ""
+
+}
+
 @test "[$TEST_FILE] Rebuild Elasticms Environments." {
 
   envs=(`docker exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:environment:list --no-debug`)
@@ -447,27 +459,26 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
 }
 
-@test "[$TEST_FILE] Activate Elasticms content types." {
 
-  run docker exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:contenttype:activate --all
+@test "[$TEST_FILE] Push templates, routes and translations." {
+
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload template_ems
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload label
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload route
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload template
 
   # Missing message when action is done (with success or not)
   # assert_output -r ""
 
 }
 
-@test "[$TEST_FILE] Push templates, routes and translations." {
-
-  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:local:push --force
-
-  # Missing message when action is done (with success or not)
-  # assert_output -r ""
-
+@test "[$TEST_FILE] Wait for green." {
+    run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} emsch:health-check -g
 }
 
 @test "[$TEST_FILE] Upload documents." {
 
-  for type in page structure slideshow form_instance asset; do
+  for type in category form_instance page section slideshow; do
     run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload ${type}
     # Missing message when action is done (with success or not)
     # assert_output -r ""
@@ -533,7 +544,7 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
     envsubst < $file > /tmp/$_name
     source /tmp/$_name
 
-    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "'Host: ${SERVER_NAME}'" -L -s -w %{http_code} -o /dev/null
+    retry 12 5 curl_container emsch :9000/ -u ${BATS_HTPASSWD_USERNAME}:${BATS_HTPASSWD_PASSWORD} -H "Host: ${SERVER_NAME}" -L -s -w %{http_code} -o /dev/null
     assert_output -l 0 $'200'
 
     rm /tmp/$_name
