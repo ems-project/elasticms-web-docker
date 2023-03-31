@@ -383,6 +383,12 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type label
   assert_output -r "content-type label with id .* has been updated"
 
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type media_file
+  assert_output -r "content-type media_file with id .* has been updated"
+
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type news
+  assert_output -r "content-type news with id .* has been updated"
+
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type page
   assert_output -r "content-type page with id .* has been updated"
 
@@ -400,6 +406,12 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type template_ems
   assert_output -r "content-type template_ems with id .* has been updated"
+
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type user_group
+  assert_output -r "content-type user_group with id .* has been updated"
+
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type audit
+  assert_output -r "content-type audit with id .* has been updated"
 
 }
 
@@ -423,6 +435,9 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update dashboard default-search
   assert_output -r "dashboard default-search with id .* has been updated"
+
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update dashboard media-library
+  assert_output -r "dashboard media-library with id .* has been updated"
 
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update dashboard sitemap
   assert_output -r "dashboard sitemap with id .* has been updated"
@@ -478,7 +493,7 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
 @test "[$TEST_FILE] Upload documents." {
 
-  for type in category form_instance page section slideshow; do
+  for type in form_instance category page section slideshow media_file news user_group; do
     run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload ${type}
     # Missing message when action is done (with success or not)
     # assert_output -r ""
