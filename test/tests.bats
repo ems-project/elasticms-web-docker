@@ -410,9 +410,6 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type user_group
   assert_output -r "content-type user_group with id .* has been updated"
 
-  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update content-type audit
-  assert_output -r "content-type audit with id .* has been updated"
-
 }
 
 @test "[$TEST_FILE] Configure Elasticms QuerySearches." {
