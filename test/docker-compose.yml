@@ -179,8 +179,8 @@ services:
       - ./demo/configs/admin:/opt/src/admin
       - ./demo/configs/document:/opt/src/document
       - ./demo/dist:/opt/src/public/skeleton:ro
-      - ./demo/skeleton:/opt/src/local/demo_pgsql_v1_preview
-      - ./demo/skeleton:/opt/src/local/demo_pgsql_v1_live
+      - ./demo/skeleton:/opt/src/local/ems_promo_v2_preview
+      - ./demo/skeleton:/opt/src/local/ems_promo_v2_live
     mem_limit: 512m
 
 networks:
