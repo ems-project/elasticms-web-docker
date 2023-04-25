@@ -4,7 +4,13 @@ ElasticMS Website Frontend in Docker containers
 
 ## Prerequisite
 
-You must install `bats`, `make`.
+You must install `bats`, `make`, `awscli`.
+
+Create a network `docker network create docker_default`
+
+Ensure that `docker-compose` is working (or create an [alias to docker-compose](https://stackoverflow.com/questions/72099653/how-to-alias-docker-compose-to-docker-compose))
+
+Define a `GITHUB_API_TOKEN` environment variable.
 
 # Build
 
