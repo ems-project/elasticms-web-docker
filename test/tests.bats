@@ -339,14 +339,14 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
 @test "[$TEST_FILE] Configure Elasticms Environments." {
 
-  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update environment default
-  assert_output -r "environment default with id .* has been updated"
-
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update environment preview
   assert_output -r "environment preview with id .* has been updated"
 
   run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update environment live
   assert_output -r "environment live with id .* has been updated"
+
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:admin:update environment default
+  assert_output -r "environment default with id .* has been updated"
 
 }
 
@@ -474,10 +474,7 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 
 @test "[$TEST_FILE] Push templates, routes and translations." {
 
-  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload template_ems
-  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload label
-  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload route
-  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:document:upload template
+  run docker exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:local:push --force
 
   # Missing message when action is done (with success or not)
   # assert_output -r ""
@@ -579,6 +576,4 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 }
 
 @test "[$TEST_FILE] Stop all and delete test containers" {
-  command docker-compose -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml stop
-  command docker-compose -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml rm -v -f  
 }
