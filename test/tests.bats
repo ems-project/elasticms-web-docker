@@ -576,4 +576,6 @@ export BATS_METRICS_ENABLED=${BATS_METRICS_ENABLED:-"true"}
 }
 
 @test "[$TEST_FILE] Stop all and delete test containers" {
+  command docker-compose -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml stop
+  command docker-compose -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml rm -v -f
 }
