@@ -7,7 +7,6 @@ LABEL be.fgov.elasticms.web.build-date=$BUILD_DATE_ARG \
       be.fgov.elasticms.web.vendor="sebastian.molle@gmail.com" \
       be.fgov.elasticms.web.version="$VERSION_ARG" \
       be.fgov.elasticms.web.release="$RELEASE_ARG" \
-      be.fgov.elasticms.web.environment="prd" \
       be.fgov.elasticms.web.schema-version="1.0"
 
 USER root
