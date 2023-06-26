@@ -224,6 +224,9 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
   run ${BATS_CONTAINER_ENGINE} exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} emsch:local:folder-upload -- /opt/src/admin/assets
   assert_output -r ".*\[OK\] .* \(on .*\) assets have been uploaded"
 
+  run ${BATS_CONTAINER_ENGINE} exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} ems:local:upload --filename=/opt/src/local/skeleton/template/asset_hash.twig
+  assert_output -r ".*\[OK\] Assets .* have been uploaded"
+
 }
 
 @test "[$TEST_FILE] Configure Elasticms Filters." {

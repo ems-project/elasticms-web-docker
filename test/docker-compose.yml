@@ -173,6 +173,7 @@ services:
       - ./demo/dist:/opt/src/public/skeleton:ro
       - ./demo/skeleton:/opt/src/local/ems_promo_v2_preview
       - ./demo/skeleton:/opt/src/local/ems_promo_v2_live
+      - ./demo/skeleton:/opt/src/local/skeleton
     mem_limit: 512m
 
 networks:
