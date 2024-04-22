@@ -264,6 +264,16 @@ function configure (
     echo "Warning: something doesn't work with Elasticms cache warming up !"
   fi
 
+  if [[ ! -z ${EMS_METRIC_ENABLED} ]] && [[ ${EMS_METRIC_ENABLED,,} = true ]]; then
+    echo "Clear Elasticms metrics for [ $_name ] CMS Domain ..."
+    /opt/bin/$_name ems:metric:collect --clear
+    if [ $? -eq 0 ]; then
+      echo "Clear Elasticms metrics for [ $_name ] CMS Domain run successfully ..."
+    else
+      echo "Warning: something doesn't work with Elasticms metrics clearing !"
+    fi
+  fi
+
   #if [ ! -z "${ENVIRONMENT_ALIAS}" ]; then
   #  echo "Found ENVIRONMENT_ALIAS environment variable."
   #  echo "Made simlink /opt/src/public/bundles/${ENVIRONMENT_ALIAS} to /opt/src/public/bundles/emsch_assets ..."
