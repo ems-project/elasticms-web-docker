@@ -265,10 +265,10 @@ function configure (
   fi
 
   if [[ ! -z ${EMS_METRIC_ENABLED} ]] && [[ ${EMS_METRIC_ENABLED,,} = true ]]; then
-    echo "Clear Elasticms metrics for [ $_name ] CMS Domain ..."
+    echo "Clear Elasticms metrics for [ $_name ] Skeleton Domain ..."
     /opt/bin/$_name ems:metric:collect --clear
     if [ $? -eq 0 ]; then
-      echo "Clear Elasticms metrics for [ $_name ] CMS Domain run successfully ..."
+      echo "Clear Elasticms metrics for [ $_name ] Skeleton Domain run successfully ..."
     else
       echo "Warning: something doesn't work with Elasticms metrics clearing !"
     fi
