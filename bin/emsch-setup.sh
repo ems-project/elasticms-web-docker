@@ -113,7 +113,9 @@ EOL
     ErrorLog /dev/stderr
     CustomLog /dev/stdout common
 
-    Header setifempty Cache-Control "${APACHE_CACHE_CONTROL:-"max-age=86400, public"}"
+    <DirectoryMatch \/bundles\/[a-f0-9]{40}\/>
+		    Header set Cache-Control "${APACHE_CACHE_CONTROL:-"max-age=86400, public"}"
+    </DirectoryMatch>
     Header setifempty X-Frame-Options "${APACHE_X_FRAME_OPTIONS:-"SAMEORIGIN"}"
     Header setifempty X-XSS-Protection "${APACHE_X_XSS_PROTECTION:-"1"}"
     Header setifempty X-Content-Type-Options "${APACHE_X_CONTENT_TYPE_OPTIONS:-"nosniff"}"
