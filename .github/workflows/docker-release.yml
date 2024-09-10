@@ -178,6 +178,18 @@ jobs:
         env:
           IMAGE_VARIANT: ${{ matrix.image-variant }}
 
+      - name: Free Disk Space
+        run: |
+          echo "Disk space before post-build cleanup:"
+          df -h
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /usr/share/dotnet
+          sudo apt-get clean
+          echo "Disk space after post-build cleanup:"
+          df -h
+
       - name: Test "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.github-ci-sha-short }}-${{ matrix.image-variant }}" Docker Image
         env:
           DOCKER_IMAGE_NAME: ${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.github-ci-sha-short }}-${{ matrix.image-variant }}
