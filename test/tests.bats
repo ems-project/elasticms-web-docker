@@ -66,6 +66,14 @@ export BATS_APP_ADMIN_ETC_VOLUME_NAME=${BATS_APP_ADMIN_ETC_VOLUME_NAME:-ems_admi
 export BATS_APP_ADMIN_BIN_VOLUME_NAME=${BATS_APP_ADMIN_BIN_VOLUME_NAME:-ems_admin_bin}
 export BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME=${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME:-ems_admin_ems_var}
 
+export BATS_APP_WEB_TMP_VOLUME_NAME=${BATS_APP_WEB_TMP_VOLUME_NAME:-ems_web_tmp}
+export BATS_APP_WEB_VAR_VOLUME_NAME=${BATS_APP_WEB_VAR_VOLUME_NAME:-ems_web_var}
+export BATS_APP_WEB_ETC_VOLUME_NAME=${BATS_APP_WEB_ETC_VOLUME_NAME:-ems_web_etc}
+export BATS_APP_WEB_BIN_VOLUME_NAME=${BATS_APP_WEB_BIN_VOLUME_NAME:-ems_web_bin}
+export BATS_APP_WEB_EMS_VAR_VOLUME_NAME=${BATS_APP_WEB_EMS_VAR_VOLUME_NAME:-ems_web_ems_var}
+export BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME=${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME:-app_web_ems_bundles}
+
+
 @test "[$TEST_FILE] Prepare Skeleton [$BATS_EMS_VERSION]." {
 
   run git clone -b ${BATS_EMS_VERSION} git@github.com:ems-project/elasticms-demo.git ${BATS_TEST_DIRNAME%/}/demo
@@ -77,11 +85,19 @@ export BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME=${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME:-
 }
 
 @test "[$TEST_FILE] Create Docker external volumes (local)" {
+
   command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_TMP_VOLUME_NAME}
   command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_VAR_VOLUME_NAME}
   command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_ETC_VOLUME_NAME}
   command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_BIN_VOLUME_NAME}
   command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_WEB_TMP_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_WEB_VAR_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_WEB_ETC_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_WEB_BIN_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_WEB_EMS_VAR_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME}
+
 }
 
 @test "[$TEST_FILE] Starting Services (PostgreSQL, Elasticsearch, Redis, Minio, Tika)." {
@@ -355,13 +371,23 @@ export BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME=${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME:-
 }
 
 @test "[$TEST_FILE] Stop all and delete test containers" {
+
   command ${BATS_CONTAINER_COMPOSE_ENGINE} -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml down -v
+
 }
 
 @test "[$TEST_FILE] Cleanup Docker external volumes (local)" {
+
   command docker volume rm ${BATS_APP_ADMIN_TMP_VOLUME_NAME}
   command docker volume rm ${BATS_APP_ADMIN_VAR_VOLUME_NAME}
   command docker volume rm ${BATS_APP_ADMIN_ETC_VOLUME_NAME}
   command docker volume rm ${BATS_APP_ADMIN_BIN_VOLUME_NAME}
   command docker volume rm ${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_WEB_TMP_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_WEB_VAR_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_WEB_ETC_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_WEB_BIN_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_WEB_EMS_VAR_VOLUME_NAME}
+
 }

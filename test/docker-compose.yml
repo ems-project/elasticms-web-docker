@@ -182,17 +182,40 @@ services:
       - METRICS_ENABLED=${BATS_METRICS_ENABLED}
       - VARNISH_ENABLED=${BATS_VARNISH_ENABLED}
     volumes:
+      - app_web_bin:/app/sbin
+      - app_web_var:/app/var
+      - app_web_etc:/app/etc
+      - app_web_tmp:/app/tmp
+      - app_web_ems_var:/app/src/elasticms/var
+      - app_web_ems_bundles:/app/src/elasticms/public/bundles
       - ./demo/dist:/app/src/elasticms/public/skeleton:ro
       - ./demo/skeleton:/app/src/elasticms/local/ems_promo_v2_preview
       - ./demo/skeleton:/app/src/elasticms/local/ems_promo_v2_live
       - ./demo/skeleton:/app/src/elasticms/local/skeleton
-#       - app_ems_bundles:/app/src/elasticms/public/bundles
-#       - app_ems_var:/app/src/elasticms/var
     mem_limit: 512m
     ports:
       - "8882:9000"
+    read_only: true
 
 volumes:
+  app_web_bin:
+    external:
+      name: ${BATS_APP_WEB_BIN_VOLUME_NAME}
+  app_web_var:
+    external:
+      name: ${BATS_APP_WEB_VAR_VOLUME_NAME}
+  app_web_ems_var:
+    external:
+      name: ${BATS_APP_WEB_EMS_VAR_VOLUME_NAME}
+  app_web_ems_bundles:
+    external:
+      name: ${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME}
+  app_web_etc:
+    external:
+      name: ${BATS_APP_WEB_ETC_VOLUME_NAME}
+  app_web_tmp:
+    external:
+      name: ${BATS_APP_WEB_TMP_VOLUME_NAME}
   app_admin_bin:
     external:
       name: ${BATS_APP_ADMIN_BIN_VOLUME_NAME}
