@@ -79,7 +79,7 @@ export BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME=${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NA
   run git clone -b ${BATS_EMS_VERSION} git@github.com:ems-project/elasticms-demo.git ${BATS_TEST_DIRNAME%/}/demo
   run mkdir -p ${BATS_TEST_DIRNAME%/}/demo/dist
   run npm install --save-dev webpack --prefix ${BATS_TEST_DIRNAME%/}/demo ${BATS_TEST_DIRNAME%/}/demo
-  run npm run --prefix ${BATS_TEST_DIRNAME%/}/demo prod
+  run npm run --prefix ${BATS_TEST_DIRNAME%/}/demo build
   run chmod 777 -Rf ${BATS_TEST_DIRNAME%/}/demo
 
 }
