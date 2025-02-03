@@ -60,6 +60,12 @@ export BATS_CONTAINER_ENGINE="${CONTAINER_ENGINE:-podman}"
 export BATS_CONTAINER_COMPOSE_ENGINE="${BATS_CONTAINER_ENGINE} compose"
 export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
+export BATS_APP_ADMIN_TMP_VOLUME_NAME=${BATS_APP_ADMIN_TMP_VOLUME_NAME:-ems_admin_tmp}
+export BATS_APP_ADMIN_VAR_VOLUME_NAME=${BATS_APP_ADMIN_VAR_VOLUME_NAME:-ems_admin_var}
+export BATS_APP_ADMIN_ETC_VOLUME_NAME=${BATS_APP_ADMIN_ETC_VOLUME_NAME:-ems_admin_etc}
+export BATS_APP_ADMIN_BIN_VOLUME_NAME=${BATS_APP_ADMIN_BIN_VOLUME_NAME:-ems_admin_bin}
+export BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME=${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME:-ems_admin_ems_var}
+
 @test "[$TEST_FILE] Prepare Skeleton [$BATS_EMS_VERSION]." {
 
   run git clone -b ${BATS_EMS_VERSION} git@github.com:ems-project/elasticms-demo.git ${BATS_TEST_DIRNAME%/}/demo
@@ -68,6 +74,14 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
   run npm run --prefix ${BATS_TEST_DIRNAME%/}/demo prod
   run chmod 777 -Rf ${BATS_TEST_DIRNAME%/}/demo
 
+}
+
+@test "[$TEST_FILE] Create Docker external volumes (local)" {
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_TMP_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_VAR_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_ETC_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_BIN_VOLUME_NAME}
+  command ${BATS_CONTAINER_ENGINE} volume create -d local ${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME}
 }
 
 @test "[$TEST_FILE] Starting Services (PostgreSQL, Elasticsearch, Redis, Minio, Tika)." {
@@ -117,7 +131,7 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 }
 
-@test "[$TEST_FILE] Loading Elasticms Config files in Configuration S3 Bucket." {
+@test "[$TEST_FILE] Loading ElasticMS Config files in Configuration S3 Bucket." {
 
   # TODO : update demo project to use more env vars in config file and use theses here (instead of manage own config files)
   for file in ${BATS_TEST_DIRNAME%/}/configs/elasticms/*.env ; do
@@ -141,7 +155,7 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
   done
 }
 
-@test "[$TEST_FILE] Starting Elasticms." {
+@test "[$TEST_FILE] Starting ElasticMS." {
   export BATS_EMS_ELASTICSEARCH_HOSTS="[\"http://$(container_ip es01):9200\",\"http://$(container_ip es02):9200\",\"http://$(container_ip es03):9200\"]"
   export BATS_S3_ENDPOINT_URL=http://$(container_ip minio):9000
   export BATS_TIKA_LOCAL_ENDPOINT_URL=http://$(container_ip tika):9998
@@ -151,16 +165,7 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 }
 
-@test "[$TEST_FILE] Check Elasticms startup messages in container logs." {
-
-  for file in ${BATS_TEST_DIRNAME%/}/configs/elasticms/*.env ; do
-    _basename=$(basename $file)
-    _name=${_basename%.*}
-    container_wait_for_log ems 60 "Install \[ ${_name} \] CMS Domain from S3 Bucket \[ ${_basename} \] file successfully ..."
-    container_wait_for_log ems 60 "Doctrine database migration for \[ ${_name} \] CMS Domain run successfully ..."
-    container_wait_for_log ems 60 "Elasticms assets installation for \[ ${_name} \] CMS Domain run successfully ..."
-    container_wait_for_log ems 60 "Elasticms warming up for \[ ${_name} \] CMS Domain run successfully ..."
-  done
+@test "[$TEST_FILE] Check ElasticMS startup messages in container logs." {
 
   container_wait_for_log ems 60 "NOTICE: ready to handle connections"
   container_wait_for_log ems 60 "AH00292: Apache/.* \(Unix\) OpenSSL/.* configured -- resuming normal operations"
@@ -178,41 +183,35 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 }
 
 @test "[$TEST_FILE] Check Skeleton startup messages in containers logs." {
-  for file in ${BATS_TEST_DIRNAME%/}/configs/skeleton/*.env ; do
-    _basename=$(basename $file)
-    _name=${_basename%.*}
-    container_wait_for_log emsch 15 "Install \[ ${_name} \] Skeleton Domain from S3 Bucket \[ ${_basename} \] file successfully ..."
-    container_wait_for_log emsch 15 "Elasticms assets installation for \[ ${_name} \] Skeleton Domain run successfully ..."
-    container_wait_for_log emsch 15 "Elasticms warming up for \[ ${_name} \] Skeleton Domain run successfully ..."
-  done
 
   container_wait_for_log emsch 15 "NOTICE: ready to handle connections"
   container_wait_for_log emsch 15 "AH00292: Apache/.* \(Unix\) OpenSSL/.* configured -- resuming normal operations"
+
 }
 
-@test "[$TEST_FILE] Create Elasticms Super Admin user." {
+@test "[$TEST_FILE] Create ElasticMS Super Admin user." {
 
-  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:create --super-admin --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ${BATS_ELASTICMS_ADMIN_EMAIL} ${BATS_ELASTICMS_ADMIN_PASSWORD}"
+  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/app/sbin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:create --super-admin --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ${BATS_ELASTICMS_ADMIN_EMAIL} ${BATS_ELASTICMS_ADMIN_PASSWORD}"
   assert_output -r ".*\[OK\] Created user \"${BATS_ELASTICMS_ADMIN_USERNAME}\""
 
-  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_API"
+  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/app/sbin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_API"
   assert_output -r ".*\[OK\] Role \"ROLE_API\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_COPY_PASTE"
+  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/app/sbin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_COPY_PASTE"
   assert_output -r ".*\[OK\] Role \"ROLE_COPY_PASTE\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_ALLOW_ALIGN"
+  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/app/sbin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_ALLOW_ALIGN"
   assert_output -r ".*\[OK\] Role \"ROLE_ALLOW_ALIGN\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_FORM_CRM"
+  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/app/sbin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_FORM_CRM"
   assert_output -r ".*\[OK\] Role \"ROLE_FORM_CRM\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
-  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/opt/bin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_TASK_MANAGER"
+  run ${BATS_CONTAINER_ENGINE} exec ems sh -c "/app/sbin/${BATS_ELASTICMS_ADMIN_ENVIRONMENT} emsco:user:promote --no-debug ${BATS_ELASTICMS_ADMIN_USERNAME} ROLE_TASK_MANAGER"
   assert_output -r ".*\[OK\] Role \"ROLE_TASK_MANAGER\" has been added to user \"${BATS_ELASTICMS_ADMIN_USERNAME}\".*"
 
 }
 
-@test "[$TEST_FILE] Login to Elasticms for admin." {
+@test "[$TEST_FILE] Login to ElasticMS for admin." {
 
   run ${BATS_CONTAINER_ENGINE} exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:admin:login --no-debug ${BATS_ELASTICMS_SKELETON_BACKEND_URL} --username=${BATS_ELASTICMS_ADMIN_USERNAME} --password=${BATS_ELASTICMS_ADMIN_PASSWORD}
   assert_output -r ".*\[OK\] Welcome ${BATS_ELASTICMS_ADMIN_USERNAME} on ${BATS_ELASTICMS_SKELETON_BACKEND_URL}"
@@ -221,17 +220,17 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 @test "[$TEST_FILE] Restore elasticms configuration" {
 
-  run ${BATS_CONTAINER_ENGINE} exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:admin:restore --no-debug --configs --configs-folder=/opt/src/configs/admin --force
+  run ${BATS_CONTAINER_ENGINE} exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:admin:restore --no-debug --configs --configs-folder=/app/src/elasticms/configs/admin --force
 
 }
 
-@test "[$TEST_FILE] Activate Elasticms content types." {
+@test "[$TEST_FILE] Activate ElasticMS content types." {
 
   run ${BATS_CONTAINER_ENGINE} exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:contenttype:activate --all --force
 
 }
 
-@test "[$TEST_FILE] Rebuild Elasticms Environments." {
+@test "[$TEST_FILE] Rebuild ElasticMS Environments." {
 
   envs=(`docker exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:environment:list --no-debug`)
 
@@ -244,11 +243,11 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 @test "[$TEST_FILE] Restore elasticms documents" {
 
-  run ${BATS_CONTAINER_ENGINE} exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:admin:restore --no-debug --documents --documents-folder=/opt/src/configs/document --force
+  run ${BATS_CONTAINER_ENGINE} exec ems ${BATS_ELASTICMS_ADMIN_ENVIRONMENT} ems:admin:restore --no-debug --documents --documents-folder=/app/src/elasticms/configs/document --force
 
 }
 
-@test "[$TEST_FILE] Login to Elasticms for web." {
+@test "[$TEST_FILE] Login to ElasticMS for web." {
 
   run ${BATS_CONTAINER_ENGINE} exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} emsch:local:login ${BATS_ELASTICMS_ADMIN_USERNAME} ${BATS_ELASTICMS_ADMIN_PASSWORD}
   assert_output -r ".*\[OK\] Welcome ${BATS_ELASTICMS_ADMIN_USERNAME} on ${BATS_ELASTICMS_SKELETON_BACKEND_URL}"
@@ -257,7 +256,7 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 @test "[$TEST_FILE] Upload web assets." {
 
-  run ${BATS_CONTAINER_ENGINE} exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} emsch:local:upload --filename=/opt/src/local/skeleton/template/asset_hash.twig
+  run ${BATS_CONTAINER_ENGINE} exec emsch ${BATS_ELASTICMS_SKELETON_ENVIRONMENT} emsch:local:upload --filename=/app/src/elasticms/local/skeleton/template/asset_hash.twig
   assert_output -r ".*\[OK\] Assets .* have been uploaded"
 
 }
@@ -282,14 +281,14 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 }
 
-@test "[$TEST_FILE] Check for Elasticms Default Index page response code 200" {
+@test "[$TEST_FILE] Check for ElasticMS Default Index page response code 200" {
 
   retry 12 5 curl_container ems :9000/index.php -H "Host: default.localhost" -s -w %{http_code} -o /dev/null
   assert_output -l 0 $'200'
 
 }
 
-@test "[$TEST_FILE] Check for Elasticms status page response code 200 for all configured domains" {
+@test "[$TEST_FILE] Check for ElasticMS status page response code 200 for all configured domains" {
 
   for file in ${BATS_TEST_DIRNAME%/}/configs/elasticms/*.env ; do
 
@@ -357,4 +356,12 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 @test "[$TEST_FILE] Stop all and delete test containers" {
   command ${BATS_CONTAINER_COMPOSE_ENGINE} -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml down -v
+}
+
+@test "[$TEST_FILE] Cleanup Docker external volumes (local)" {
+  command docker volume rm ${BATS_APP_ADMIN_TMP_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_ADMIN_VAR_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_ADMIN_ETC_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_ADMIN_BIN_VOLUME_NAME}
+  command docker volume rm ${BATS_APP_ADMIN_EMS_VAR_VOLUME_NAME}
 }
