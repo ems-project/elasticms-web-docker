@@ -187,4 +187,46 @@ Return WebSite Skeleton Prometheus metrics.
 | Variable Name | Description | Default |
 | - | - | - |
 | METRICS_ENABLED | Add metrics dedicated vhost running on a specific port (9090). | `empty` |
-| METRICS_VHOST_SERVER_NAME_CUSTOM | Apache ServerName directive used for dedicated vhost. | `$(hostname -i)` |
+| METRICS_VHOST_SERVER_NAME | Apache ServerName directive used for dedicated vhost. | `$(hostname -i)` |
+
+# 6.x ( PHP v8.4 - Road to ReadOnly Containers ... )
+
+- paths :
+  - /opt/(configs|secrets) -> /app/config/elasticms
+      -> plus de distinction entre secrets et configmaps 
+
+  - /opt/src -> /app/src/elasticms
+  - /opt/bin -> /app/sbin ( scripts créés dynamiquement , peut-etre être un volume )
+  - /tmp -> /app/tmp/elasticms.d 
+  - /var/lib/ems -> deleted
+  
+- utilisation des variables environment non prefixee dans les scripts
+  - METRICS_ENABLED vs EMS_METRIC_ENABLED
+
+- rename variables
+  METRICS_VHOST_SERVER_NAME_CUSTOM -> METRICS_VHOST_SERVER_NAME
+  ENVIRONMENT_ALIAS -> APACHE_ENVIRONMENT_ALIAS
+
+- new variables
+
+export APP_BIN_DIR="/app/sbin"
+export APP_SRC_DIR="/app/src/elasticms"
+export APP_TMP_DIR="${TMPDIR}"
+
+export APP_CONFIG_DIR="${APP_TMP_DIR}/elasticms.d"
+export APP_CACHE_DIR="/app/var/cache/elasticms"
+export APP_LOG_DIR="/app/var/log/elasticms"
+
+export APACHE_PUBLIC_DIR="${APP_SRC_DIR}/public"
+export APACHE_ASSETS_DIR="${APACHE_PUBLIC_DIR}/bundles"
+
+HTPASSWD_FILE
+
+true
+
+
+
+APP_PUBLIC_DIR
+APP_ASSETS_DIR
+
+- use gtpl ald. tmpl pour éviter gomplate standard de l'image de base.  les templates reprennent des variables lues plus tard (dans les fichiers de config ems) 

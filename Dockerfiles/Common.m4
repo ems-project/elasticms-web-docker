@@ -11,23 +11,20 @@ LABEL be.fgov.elasticms.web.build-date=$BUILD_DATE_ARG \
 
 USER root
 
-COPY bin/ /opt/bin/container-entrypoint.d/
-COPY etc/ /usr/local/etc/
-COPY --from=builder /opt/src /opt/src
+COPY --chmod=775 --chown=${PUID:-1001}:0 bin/ /app/bin/
+COPY --chmod=664 --chown=${PUID:-1001}:0 config/ /app/config/
 
-ENV APP_DISABLE_DOTENV=true
-ENV EMS_METRIC_PORT="9090"
+COPY --chmod=664 --chown=${PUID:-1001}:0 --from=builder /app/src/elasticms /app/src/elasticms
 
-RUN echo -e "\nListen ${EMS_METRIC_PORT}\n" >> /etc/apache2/httpd.conf \
-    && echo "Setup permissions on filesystem for non-privileged user ..." \
-    && chmod -Rf +x /opt/bin \
-    && chown -Rf ${PUID:-1001}:0 /opt \
-    && chmod -R ug+rw /opt \
-    && find /opt -type d -exec chmod ug+x {} \;
+ENV APP_DISABLE_DOTENV=true \
+    EMS_METRIC_PORT="9090" \
+    PATH=/app/bin:/app/sbin:/usr/local/bin:/usr/bin:$PATH
+
+RUN find /app -type d -exec chmod ugo+x {} \;
 
 USER ${PUID:-1001}
 
 EXPOSE ${EMS_METRIC_PORT}/tcp
 
-HEALTHCHECK --start-period=10s --interval=1m --timeout=5s --retries=5 \
+HEALTHCHECK --start-period=5s --interval=1m --timeout=2s --retries=5 \
         CMD curl --fail --header "Host: default.localhost" http://localhost:9000/index.php || exit 1

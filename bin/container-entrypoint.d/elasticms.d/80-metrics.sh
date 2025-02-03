@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ ! -z ${EMS_METRICS_ENABLED} ]] && [[ ${EMS_METRICS_ENABLED,,} = true ]]; then
+
+  log "INFO" "+ Clear ElasticMS metrics for [ ${ELASTICMS_INSTANCE_NAME} ] WebSite Domain ..."
+
+  ${APP_BIN_DIR}/${ELASTICMS_INSTANCE_NAME} ems:metric:collect --clear
+
+  if [ $? -ne 0 ]; then
+    log "WARN" "! Something doesn't work with ElasticMS metrics clearing !"
+  fi
+
+fi
