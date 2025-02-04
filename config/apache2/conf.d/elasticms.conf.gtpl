@@ -27,11 +27,6 @@
         FallbackResource /index.php
     </Directory>
 
-    # Bug in < 6.x ?
-    <Directory {{ .Env.APACHE_ASSETS_DIR }} >
-      FallbackResource disabled
-    </Directory>
-
     <DirectoryMatch \/bundles\/[a-f0-9]{40}\/>
       Header set Cache-Control "{{ .Env.APACHE_CACHE_CONTROL }}"
     </DirectoryMatch>
