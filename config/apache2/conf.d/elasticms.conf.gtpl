@@ -63,16 +63,17 @@
 {{- if ne .Env.APACHE_ENVIRONMENTS "" }}
 
   {{- $environments := env.Getenv "APACHE_ENVIRONMENTS" | jsonArray -}}
+  {{- $globalContext := . -}}
   {{- range $env := $environments }}
 
-    Alias {{ $env.alias }}/bundles/emsch_assets {{ .Env.APP_SRC_DIR }}/public/bundles/{{ $env.env }}
-    Alias {{ $env.alias }} {{ .Env.APP_SRC_DIR }}/public
+    Alias {{ $env.alias }}/bundles/emsch_assets {{ $globalContext.Env.APP_SRC_DIR }}/public/bundles/{{ $env.env }}
+    Alias {{ $env.alias }} {{ $globalContext.Env.APP_SRC_DIR }}/public
 
     RewriteCond %{REQUEST_URI} !^{{ $env.alias }}/index.php
 
-    {{- if ne .Env.APACHE_CUSTOM_ASSETS_RC "" }}
+    {{- if ne $globalContext.Env.APACHE_CUSTOM_ASSETS_RC "" }}
 
-    RewriteCond %{REQUEST_URI} !^{{ .Env.APACHE_CUSTOM_ASSETS_RC }}
+    RewriteCond %{REQUEST_URI} !^{{ $globalContext.Env.APACHE_CUSTOM_ASSETS_RC }}
 
     {{ else }}
 
