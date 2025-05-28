@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ ! -z ${EMS_METRICS_ENABLED} ]] && [[ ${EMS_METRICS_ENABLED,,} = true ]]; then
+if [[ ! -z ${EMS_METRIC_ENABLED} ]] && [[ ${EMS_METRIC_ENABLED,,} = true ]]; then
 
   log "INFO" "+ Clear ElasticMS metrics for [ ${ELASTICMS_INSTANCE_NAME} ] WebSite Domain ..."
 
