@@ -51,7 +51,7 @@
 {{- end }}
 
 {{- if ne .Env.APACHE_PERMISSIONS_POLICY "" }}
-    Header setifempty Referrer-Policy "{{ .Env.APACHE_PERMISSIONS_POLICY }}"
+    Header setifempty Permissions-Policy "{{ .Env.APACHE_PERMISSIONS_POLICY }}"
 {{- end }}
 
 {{- if ne .Env.APACHE_ACCESS_CONTROL_ALLOW_ORIGIN "" }}
