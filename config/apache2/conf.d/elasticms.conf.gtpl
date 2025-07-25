@@ -106,8 +106,8 @@
 
 {{- end }}
 
-{{- if ne .Env.PROTECTED_URL "" }}
-    <Location {{ .Env.PROTECTED_URL }} >
+{{- if ne .Env.APACHE_PROTECTED_URL "" }}
+    <Location {{ .Env.APACHE_PROTECTED_URL }} >
       AuthType Basic
       AuthName "Protected Area"
       AuthBasicProvider file
