@@ -100,22 +100,22 @@ export BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME=${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NA
 
 }
 
-@test "[$TEST_FILE] Starting Services (PostgreSQL, Elasticsearch, Redis, Minio, Tika)." {
+@test "[$TEST_FILE] Starting Services (PostgreSQL, Elasticsearch, Redis, SeaweedFS, Tika)." {
 
-  command ${BATS_CONTAINER_COMPOSE_ENGINE} -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml up -d postgresql es01 es02 es03 redis tika minio
+  command ${BATS_CONTAINER_COMPOSE_ENGINE} -f ${BATS_TEST_DIRNAME%/}/docker-compose.yml up -d postgresql es01 es02 es03 redis tika seaweedfs
   container_wait_for_command postgresql "pg_isready -U ${BATS_ROOT_DB_USER}" "120" "/var/run/postgresql:5432 - accepting connection"
   container_wait_for_log es01 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
   container_wait_for_log es02 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
   container_wait_for_log es03 120 ".*\"type\": \"server\", \"timestamp\": \".*\", \"level\": \".*\", \"component\": \".*\", \"cluster.name\": \".*\", \"node.name\": \".*\", \"message\": \"started\".*"
   container_wait_for_log redis 240 "Ready to accept connections"
-  container_wait_for_healthy minio 120
+  container_wait_for_healthy seaweedfs 120
   container_wait_for_healthy tika 120
 
 }
 
 @test "[$TEST_FILE] Create Configuration S3 Bucket." {
 
-  export BATS_S3_ENDPOINT_URL=http://$(container_ip minio):9000
+  export BATS_S3_ENDPOINT_URL=http://$(container_ip seaweedfs):8333
 
   run ${BATS_CONTAINER_ENGINE} run --rm -t --network ${BATS_CONTAINER_NETWORK_NAME} \
                       -e AWS_ACCESS_KEY_ID="${BATS_S3_ACCESS_KEY_ID}" \
@@ -129,7 +129,7 @@ export BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME=${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NA
 
 @test "[$TEST_FILE] Create Storage S3 Bucket." {
 
-  export BATS_S3_ENDPOINT_URL=http://$(container_ip minio):9000
+  export BATS_S3_ENDPOINT_URL=http://$(container_ip seaweedfs):8333
 
   run ${BATS_CONTAINER_ENGINE} run --rm -t --network ${BATS_CONTAINER_NETWORK_NAME} \
                       -e AWS_ACCESS_KEY_ID="${BATS_S3_ACCESS_KEY_ID}" \
@@ -173,7 +173,7 @@ export BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME=${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NA
 
 @test "[$TEST_FILE] Starting ElasticMS." {
   export BATS_EMS_ELASTICSEARCH_HOSTS="[\"http://$(container_ip es01):9200\",\"http://$(container_ip es02):9200\",\"http://$(container_ip es03):9200\"]"
-  export BATS_S3_ENDPOINT_URL=http://$(container_ip minio):9000
+  export BATS_S3_ENDPOINT_URL=http://$(container_ip seaweedfs):8333
   export BATS_TIKA_LOCAL_ENDPOINT_URL=http://$(container_ip tika):9998
   export BATS_REDIS_HOST=$(container_ip redis)
 
@@ -190,7 +190,7 @@ export BATS_APP_WEB_EMS_BUNDLES_VOLUME_NAME=${BATS_APP_WEB_EMS_BUNDLES_VOLUME_NA
 
 @test "[$TEST_FILE] Starting Skeleton." {
   export BATS_EMS_ELASTICSEARCH_HOSTS="[\"http://$(container_ip es01):9200\",\"http://$(container_ip es02):9200\",\"http://$(container_ip es03):9200\"]"
-  export BATS_S3_ENDPOINT_URL=http://$(container_ip minio):9000
+  export BATS_S3_ENDPOINT_URL=http://$(container_ip seaweedfs):8333
   export BATS_TIKA_LOCAL_ENDPOINT_URL=http://$(container_ip tika):9998
   export BATS_REDIS_HOST=$(container_ip redis)
 
